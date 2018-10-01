@@ -1,3 +1,60 @@
+<?php
+session_start();
+
+require_once 'includes/config.php';
+
+if ( isset( $_GET['action'] ) ) {
+    if ( $_GET['action'] == 'logout' ) {
+        unset( $_SESSION['user_session'] );
+        if ( session_destroy() ) {
+            header( "Location: login.php" );
+        }
+    }
+}
+
+if (isset($_POST['username']) && isset($_POST['password'])) {
+
+    if (empty($_POST['username']) OR empty($_POST['password'])) {
+        echo "empty username or password";
+
+        return;
+    }
+
+    if (filter_var($_POST['username'], FILTER_SANITIZE_EMAIL) === false) {
+        echo 'bad username';
+
+        return;
+    }
+
+    $user_email = trim($_POST['username']);
+    $password = md5(trim($_POST['password']));  // Hash password
+
+    try {
+        $db = new MySQL();
+        $return = $db->query("SELECT * FROM " . LOGIN_TABLE . " WHERE email = :email");
+        $db->bind('email', $user_email, PDO::PARAM_STR);
+        $db->execute();
+        $row = $db->single();
+
+        // Make sure we had at least one row
+        $rowCount = $db->rowCount();
+        $db->closeConnection();
+
+        if ($rowCount > 0 && !empty($row['password']) && $row['password'] == $password) {
+            echo "ok".$row['username']; // log in
+            $_SESSION['user_session']['id']   = $row['id'];
+            $_SESSION['user_session']['name'] = $row['username'];
+        } else {
+            echo 'Mmm sorry, wrong email / password combination';
+        }
+    } catch ( PDOException $e ) {
+        echo $e->getMessage();
+    }
+} else {
+
+?>
+
+
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -80,19 +137,14 @@
                 <h2>Admin Login</h2>
                 <p>Please enter your email and password</p>
             </div>
-            <form id="Login">
+            <form id="Login" action="login.php" method="post">
 
                 <div class="form-group">
-
-
                     <input type="email" class="form-control" id="inputEmail" placeholder="Email Address">
-
                 </div>
 
                 <div class="form-group">
-
                     <input type="password" class="form-control" id="inputPassword" placeholder="Password">
-
                 </div>
                 <div class="forgot">
                     <a href="reset.html">Forgot password?</a>
@@ -107,3 +159,7 @@
 
 </body>
 </html>
+
+<?php
+}
+?>
