@@ -130,11 +130,9 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 </head>
 <body id="LoginForm">
 <div class="container">
-    <h1 class="form-heading">login Form</h1>
     <div class="login-form">
         <div class="main-div">
             <div class="panel">
-                <h2>Admin Login</h2>
                 <p>Please enter your email and password</p>
             </div>
             <form id="Login" action="login.php" method="post">
@@ -153,7 +151,6 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
             </form>
         </div>
-        <p class="botto-text"> Designed by Sunil Rajput</p>
     </div></div></div>
 
 
