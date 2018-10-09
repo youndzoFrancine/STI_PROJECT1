@@ -21,6 +21,29 @@
     <!-- Custom styles for this template -->
     <link href="css/business-casual.min.css" rel="stylesheet">
 
+      <style>
+          table tr td {
+              padding: 5px 20px 5px 0px;
+              text-align: left;
+          }
+
+          table tr td:first-child {
+              width: 5%;
+          }
+
+          table tr td:nth-child(2), table tr td:nth-child(3), table tr td:nth-child(4) {
+              width: 20%;
+          }
+
+          table tr td:nth-child(5) {
+              width: 30%;
+          }
+
+          table tr td:nth-child(6) {
+              width: 5%;
+          }
+      </style>
+
   </head>
 
   <body>
@@ -69,8 +92,58 @@
                   <span class="section-heading-upper">Strong Coffee, Strong Roots</span>
                   <span class="section-heading-lower">About Our Cafe</span>
                 </h2>
-                <p>Founded in 1987 by the Hernandez brothers, our establishment has been serving up rich coffee sourced from artisan farmers in various regions of South and Central America. We are dedicated to travelling the world, finding the best coffee, and bringing back to you here in our cafe.</p>
-                <p class="mb-0">We guarantee that you will fall in <em>lust</em> with our decadent blends the moment you walk inside until you finish your last sip. Join us for your daily routine, an outing with friends, or simply just to enjoy some alone time.</p>
+                <table>
+
+                    <?php
+
+                    $db = new PDO('sqlite:../databases/database.sqlite');
+                    $query = "  SELECT messages.id, 
+                                  u1.email AS email_exp, 
+                                  u2.email AS email_dst, 
+                                  subject, body, time 
+                                FROM messages 
+                                INNER JOIN users AS u1 
+                                  ON messages.id_sender = u1.id 
+                                INNER JOIN users AS u2 
+                                  ON messages.id_reciever = u2.id;";
+                    $messages = $db->query($query);
+
+                    if (empty($messages)) {
+                        echo 'No entry in database';
+                    } else {
+
+                        echo '<table>';
+
+                        // Display headers
+                        echo '<th>ID</th>';
+                        echo '<th>Expéditeur</th>';
+                        echo '<th>Destinataire</th>';
+                        echo '<th>Sujet</th>';
+                        echo '<th>Corps du message</th>';
+                        echo '<th>Date / heure</th>';
+
+                        // Iterate each record
+                        foreach($messages as $row){
+
+                            // Start a row
+                            echo '<tr>';
+
+                            echo '<td>'.$row["id"].'</td>';
+                            echo '<td>'.$row["email_exp"].'</td>';
+                            echo '<td>'.$row["email_dst"].'</td>';
+                            echo '<td>'.$row["subject"].'</td>';
+                            echo '<td>'.$row["body"].'</td>';
+                            echo '<td>'.$row["time"].'</td>';
+
+                            // end row
+                            echo '</tr>';
+                        }
+                        echo '</table>';
+                    }
+
+                    ?>
+
+                </table>
               </div>
             </div>
           </div>
