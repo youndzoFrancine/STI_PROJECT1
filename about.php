@@ -97,7 +97,7 @@
                     <?php
 
                     $db = new PDO('sqlite:../databases/database.sqlite');
-                    $query = "  SELECT messages.id, 
+                    $query = " SELECT messages.id, 
                                   u1.email AS email_exp, 
                                   u2.email AS email_dst, 
                                   subject, body, time 

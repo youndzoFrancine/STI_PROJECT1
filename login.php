@@ -12,46 +12,64 @@ if ( isset( $_GET['action'] ) ) {
     }
 }
 
-if (isset($_POST['username']) && isset($_POST['password'])) {
+if($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    if (empty($_POST['username']) OR empty($_POST['password'])) {
-        echo "empty username or password";
+    if (isset($_POST['email']) && isset($_POST['password'])) {
 
-        return;
-    }
 
-    if (filter_var($_POST['username'], FILTER_SANITIZE_EMAIL) === false) {
-        echo 'bad username';
+        if (filter_var($_POST['email'], FILTER_SANITIZE_EMAIL) === false) {
+            echo 'bad username';
 
-        return;
-    }
-
-    $user_email = trim($_POST['username']);
-    $password = md5(trim($_POST['password']));  // Hash password
-
-    try {
-        $db = new MySQL();
-        $return = $db->query("SELECT * FROM " . LOGIN_TABLE . " WHERE email = :email");
-        $db->bind('email', $user_email, PDO::PARAM_STR);
-        $db->execute();
-        $row = $db->single();
-
-        // Make sure we had at least one row
-        $rowCount = $db->rowCount();
-        $db->closeConnection();
-
-        if ($rowCount > 0 && !empty($row['password']) && $row['password'] == $password) {
-            echo "ok".$row['username']; // log in
-            $_SESSION['user_session']['id']   = $row['id'];
-            $_SESSION['user_session']['name'] = $row['username'];
-        } else {
-            echo 'Mmm sorry, wrong email / password combination';
+            return;
         }
-    } catch ( PDOException $e ) {
-        echo $e->getMessage();
-    }
-} else {
 
+        $user_email = trim($_POST['email']);
+        $password = md5(trim($_POST['password']));  // Hash password
+
+        try {
+
+            $db = new PDO('sqlite:../databases/database.sqlite');
+
+            if (!$db) {
+                echo 'Unable to open a connection to the database';
+            } else {
+                $query = "SELECT users.email, users.password FROM users";
+
+                $return = $db->query($query);
+
+                if($query['email'] === $email){
+                    header("Location: signup.php");
+                }
+
+                //SELECT tbl_name FROM sqlite_master WHERE type = 'table';
+                /*
+                $db->bind('email', $user_email, PDO::PARAM_STR);
+                $db->execute();
+                $row = $db->single();
+
+                // Make sure we had at least one row
+                $rowCount = $db->rowCount();
+                $db->closeConnection();
+
+                if ($rowCount > 0 && !empty($row['password']) && $row['password'] == $password) {
+                    echo "ok".$row['username']; // log in
+                    $_SESSION['user_session']['id']   = $row['id'];
+                    $_SESSION['user_session']['name'] = $row['username'];
+
+                    header("Location: index.php");
+                } else {
+                    echo 'Mmm sorry, wrong email / password combination';
+                }
+                */
+            }
+
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
+    }else{
+        $warning = "Please fulfill all fields";
+    }
+}
 ?>
 
 
@@ -68,7 +86,6 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
         body#LoginForm{ background-image:url("https://hdwallsource.com/img/2014/9/blur-26347-27038-hd-wallpapers.jpg"); background-repeat:no-repeat; background-position:center; background-size:cover; padding:10px;}
 
-        .form-heading { color:#fff; font-size:23px;}
         .panel h2{ color:#444444; font-size:18px; margin:0 0 8px 0;}
         .panel p { color:#777777; font-size:14px; margin-bottom:30px; line-height:24px;}
         .login-form .form-control {
@@ -91,7 +108,7 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
             margin-bottom:10px;
         }
         .login-form{ text-align:center;}
-        .forgot a {
+        .create a {
             color: #777777;
             font-size: 14px;
             text-decoration: underline;
@@ -106,18 +123,14 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
             line-height: 50px;
             padding: 0;
         }
-        .forgot {
+        .create {
             text-align: left; margin-bottom:30px;
         }
-        .botto-text {
-            color: #ffffff;
-            font-size: 14px;
-            margin: auto;
-        }
+
         .login-form .btn.btn-primary.reset {
             background: #ff9900 none repeat scroll 0 0;
         }
-        .back { text-align: left; margin-top:10px;}
+
         .back a {color: #444444; font-size: 13px;text-decoration: none;}
 
 
@@ -134,19 +147,18 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
         <div class="main-div">
             <div class="panel">
                 <p>Please enter your email and password</p>
+                <p><span class="warning" name="warning"><?php echo $warning;?></span> </p>
             </div>
             <form id="Login" action="login.php" method="post">
 
                 <div class="form-group">
-                    <input type="email" class="form-control" id="inputEmail" placeholder="Email Address">
+                    <input value="<?php echo (isset($email) ? $email : ''); ?>" type="email" class="form-control" id="inputEmail" placeholder="Email Address">
                 </div>
 
                 <div class="form-group">
                     <input type="password" class="form-control" id="inputPassword" placeholder="Password">
                 </div>
-                <div class="forgot">
-                    <a href="reset.html">Forgot password?</a>
-                </div>
+
                 <button type="submit" class="btn btn-primary">Login</button>
 
             </form>
@@ -156,7 +168,3 @@ if (isset($_POST['username']) && isset($_POST['password'])) {
 
 </body>
 </html>
-
-<?php
-}
-?>

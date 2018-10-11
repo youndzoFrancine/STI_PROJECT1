@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
 
-    if (isset($_POST['email'])) {
+    if (!isset($_POST['email'])) {
         $emailErr = "Email is required";
     } elseif (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)){
         $emailErr = "Email is invalid";
@@ -47,7 +47,6 @@ function test_input($data) {
 
     body#SignupForm{ background-image:url("https://hdwallsource.com/img/2014/9/blur-26347-27038-hd-wallpapers.jpg"); background-repeat:no-repeat; background-position:center; background-size:cover; padding:10px;}
 
-    .form-heading { color:#fff; font-size:23px;}
     .panel h1{ color:#444444; font-size:24px; margin:0 0 8px 0;}
         .panel p { color:#777777; font-size:20px; margin-bottom:30px; line-height:24px;}
             .signup-form .form-control {
@@ -98,18 +97,11 @@ function test_input($data) {
         .error{
             color: #FF0000;
         }
-        .create {
-                text-align: left; margin-bottom:30px;
-        }
-        .botto-text {
-                color: #ffffff;
-                font-size: 14px;
-            margin: auto;
-        }
+
         .signup-form .btn.btn-primary.signup {
                 background: #ff9900 none repeat scroll 0 0;
             }
-        .back { text-align: left; margin-top:10px;}
+
         .back a {color: #444444; font-size: 13px;text-decoration: none;}
 
         .label-text{
@@ -142,13 +134,13 @@ function test_input($data) {
 
                 <div class="form-group">
                     <label class="label-text">New password: </label>
-                    <input type="password" class="form-control" name="newPwd" id="newPwd">
+                    <input value="<?php echo (isset($newPwd) ? $newPwd : ''); ?>" type="password" class="form-control" name="newPwd" id="newPwd">
                     <span class="error">* <?php echo $newPwdErr;?></span>
                 </div>
 
                 <div class="form-group">
                     <label class="label-text">Confirm password: </label>
-                    <input type="password" class="form-control" name="confirmPwd" id="confirmPwd">
+                    <input value="<?php echo (isset($confirmPwd) ? $confirmPwd : ''); ?>" type="password" class="form-control" name="confirmPwd" id="confirmPwd">
                     <span class="error">* <?php echo $confirmPwdErr;?></span>
                 </div>
 
