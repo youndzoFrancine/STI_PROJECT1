@@ -14,63 +14,61 @@ if ( isset( $_GET['action'] ) ) {
 
 if($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    if (isset($_POST['email']) && isset($_POST['password'])) {
+    $warning = "";
 
-
-        if (filter_var($_POST['email'], FILTER_SANITIZE_EMAIL) === false) {
-            echo 'bad username';
-
-            return;
-        }
-
-        $user_email = trim($_POST['email']);
-        $password = md5(trim($_POST['password']));  // Hash password
+    if(empty($_POST['email']) OR empty($_POST['password'])){
+        $warning = "Please fulfill all fields";
+    }elseif (!isset($_POST['email']) OR !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) OR !isset($_POST['password'])){
+        $warning = "Something is wrong";
+    }else{
+        $email = test_input($_POST['email']);
+        $password = test_input($_POST['password']);
 
         try {
 
             $db = new PDO('sqlite:../databases/database.sqlite');
 
-            if (!$db) {
-                echo 'Unable to open a connection to the database';
-            } else {
-                $query = "SELECT users.email, users.password FROM users";
+                if(!$db){
+                    $warning='Unable to open a connection to the database';
+                }else {
+                    $query = "SELECT * FROM users WHERE email = '$email';";
+                    $result = $db->query($query);
 
-                $return = $db->query($query);
+                    $temp1 = "";
+                    $temp2 = "";
 
-                if($query['email'] === $email){
-                    header("Location: signup.php");
+                    if ($result) {
+                        foreach ($result as $row) {
+                            $temp1 = $row['email'];
+                            $temp2 = $row['password'];
+                        }
+
+                        if ($temp1 == $email AND $temp2 == $password) {
+                            header("Location: signup.php");
+                        } else {
+                            $warning = "Wrong credentials";
+                        }
+                    }
                 }
 
-                //SELECT tbl_name FROM sqlite_master WHERE type = 'table';
-                /*
-                $db->bind('email', $user_email, PDO::PARAM_STR);
-                $db->execute();
-                $row = $db->single();
-
-                // Make sure we had at least one row
-                $rowCount = $db->rowCount();
-                $db->closeConnection();
-
-                if ($rowCount > 0 && !empty($row['password']) && $row['password'] == $password) {
-                    echo "ok".$row['username']; // log in
-                    $_SESSION['user_session']['id']   = $row['id'];
-                    $_SESSION['user_session']['name'] = $row['username'];
-
-                    header("Location: index.php");
-                } else {
-                    echo 'Mmm sorry, wrong email / password combination';
-                }
-                */
-            }
 
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
-    }else{
-        $warning = "Please fulfill all fields";
+
     }
 }
+
+function test_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
+
 ?>
+
 
 
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -123,8 +121,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             line-height: 50px;
             padding: 0;
         }
-        .create {
-            text-align: left; margin-bottom:30px;
+
+        .warning{
+            color: #FF0000;
         }
 
         .login-form .btn.btn-primary.reset {
@@ -152,11 +151,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             <form id="Login" action="login.php" method="post">
 
                 <div class="form-group">
-                    <input value="<?php echo (isset($email) ? $email : ''); ?>" type="email" class="form-control" id="inputEmail" placeholder="Email Address">
+                    <input value="<?php echo (isset($email) ? $email : ''); ?>" type="email" name="email" class="form-control" id="inputEmail" placeholder="Email Address">
                 </div>
 
                 <div class="form-group">
-                    <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+                    <input type="password" name="password" class="form-control" id="inputPassword" placeholder="Password">
                 </div>
 
                 <button type="submit" class="btn btn-primary">Login</button>

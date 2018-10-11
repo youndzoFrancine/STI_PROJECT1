@@ -105,7 +105,7 @@
                                 INNER JOIN users AS u1 
                                   ON messages.id_sender = u1.id 
                                 INNER JOIN users AS u2 
-                                  ON messages.id_reciever = u2.id;";
+                                  ON messages.id_receiver = u2.id;";
                     $messages = $db->query($query);
 
                     if (empty($messages)) {

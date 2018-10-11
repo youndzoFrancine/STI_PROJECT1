@@ -27,6 +27,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($newPwd !== $confirmPwd) {
         $confirmPwdErr = "Password is different";
+    }else{
+        try {
+
+            $db = new PDO('sqlite:../databases/database.sqlite');
+
+            if(!$db){
+                $warning='Unable to open a connection to the database';
+            }else {
+                $query = "INSERT INTO users(email, password, isAdmin, registerDate, lastLoginDate) 
+                          VALUES (6, 'miguel.silva@test.com', 'test', 1, CURRENT_DATE , CURRENT_DATE );";
+                $stmt = prepare($db);
+                $stmt->execute();
+            }
+
+
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+        }
     }
 }
 
