@@ -1,9 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lapin
- * Date: 2018-10-01
- * Time: 15:16
- */
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
 define( '__SITE_PATH', realpath( dirname( __FILE__ ) ) );
