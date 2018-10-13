@@ -1,10 +1,10 @@
 <?php
 // define variables and set to empty values
-$email = $newPwd = $confirmPwd = "";
+$email = $password = $confirmPwd = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $emailErr = $newPwdErr = $confirmPwdErr = "";
+    $emailErr = $newPwdErr = $confirmPwdErr = $warning = " ";
 
     if(empty($_POST['email']) OR empty($_POST['newPwd']) OR empty($_POST['confirmPwd'])){
         $warning="Please fulfill all fields";
@@ -20,27 +20,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
 
-    $newPwd = test_input($_POST["newPwd"]);
+    $password = test_input($_POST["newPwd"]);
 
     $confirmPwd = test_input($_POST["confirmPwd"]);
 
 
-    if ($newPwd !== $confirmPwd) {
+    if ($password !== $confirmPwd) {
         $confirmPwdErr = "Password is different";
+
     }else{
         try {
 
+            isset($_POST['Admin']) ? $isAdmin = 1 : $isAdmin = 0;
+/*
+            $items = array(
+                    array(
+                            'email' => $email,
+                            'password' => $password,
+                            'isAdmin' =>$isAdmin,
+                    )
+            );
+*/
             $db = new PDO('sqlite:../databases/database.sqlite');
 
             if(!$db){
                 $warning='Unable to open a connection to the database';
             }else {
-                $query = "INSERT INTO users(email, password, isAdmin, registerDate, lastLoginDate) 
-                          VALUES (6, 'miguel.silva@test.com', 'test', 1, CURRENT_DATE , CURRENT_DATE );";
-                $stmt = prepare($db);
-                $stmt->execute();
-            }
 
+
+                $insert = $db->prepare('INSERT INTO users(email, password, isAdmin) VALUES (? , ?, ?)');
+
+                $insert->execute(array($email, $password, $isAdmin));
+                //$stmt = $db->prepare($insert);
+/*
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':password', $password);
+                $stmt->bindParam(':isAdmin', $isAdmin);
+
+                foreach ($data as $item){
+                    $email = $item['email'];
+                    $password = $item['password'];
+                    $isAdmin = $item['isAdmin'];
+
+                $stmt->execute([
+                        ':email' => $email,
+                        ':password' => $password,
+                        ':isAdmin' => $isAdmin,
+                ]);
+*/
+            }
 
         } catch (PDOException $e) {
             echo $e->getMessage();
@@ -70,18 +98,20 @@ function test_input($data) {
             .signup-form .form-control {
                 background: #f7f7f7 none repeat scroll 0 0;
                 border: 1px solid #d4d4d4;
-            border-radius: 4px;
-            font-size: 14px;
-            height: 50px;
-            line-height: 50px;
+                border-radius: 4px;
+                font-size: 14px;
+                height: 40px;
+                line-height: 40px;
+                display: inline-block;
+                position: static;
+
         }
         .main-div {
-                background: #ffffff none repeat scroll 0 0;
-                border-radius: 2px;
+            background: #ffffff none repeat scroll 0 0;
+            border-radius: 2px;
             margin: 10px auto 30px;
-            max-width: 30%;
+            width: 500px;
             padding: 50px 70px 70px 71px;
-
             display: inline-block;
 
         }
@@ -89,21 +119,21 @@ function test_input($data) {
         .main-div input{
             display: inline-block;
             float: right;
+            width: 300px;
         }
 
         .signup-form .form-group {
-                margin-bottom:10px;
-                text-align: left;
+            text-align: left;
         }
         .signup-form{ text-align:center;}
         .create a {
-                color: #777777;
-                font-size: 14px;
+            color: #777777;
+            font-size: 14px;
             text-decoration: underline;
         }
         .signup-form  .btn.btn-primary {
-                background: #f0ad4e none repeat scroll 0 0;
-                border-color: #f0ad4e;
+            background: #f0ad4e none repeat scroll 0 0;
+            border-color: #f0ad4e;
             color: #ffffff;
             font-size: 14px;
             width: 100%;
@@ -114,10 +144,11 @@ function test_input($data) {
 
         .error{
             color: #FF0000;
+            font-size: 10px;
         }
 
         .signup-form .btn.btn-primary.signup {
-                background: #ff9900 none repeat scroll 0 0;
+            background: #ff9900 none repeat scroll 0 0;
             }
 
         .back a {color: #444444; font-size: 13px;text-decoration: none;}
@@ -129,7 +160,20 @@ function test_input($data) {
             line-height: 50px;
             padding-left: 10px;
             padding-right: 10px;
+            display: inline-block;
+            position: static;
         }
+
+        .Admin {
+            background: #f7f7f7 none repeat scroll 0 0;
+            border: 1px solid #d4d4d4;
+            border-radius: 4px;
+            height: 40px;
+            line-height: 40px;
+            border-radius: 4px;
+            alignment: left;
+        }
+
                 </style>
 
 </head>
@@ -144,23 +188,38 @@ function test_input($data) {
             <p><span class="error">* required field</span></p>
             <form id="Signup" action="signup.php" method="post">
 
+
+
                 <div class="form-group">
                     <label class="label-text">Email: </label>
                     <input value="<?php echo (isset($email) ? $email : ''); ?>" type="email" class="form-control" name="email" id="email">
-                    <span class="error">* <?php echo $emailErr;?></span>
+                    <span class="error">* </span>
+                    <label class="error"><?php echo $emailErr;?></label>
                 </div>
 
                 <div class="form-group">
                     <label class="label-text">New password: </label>
-                    <input value="<?php echo (isset($newPwd) ? $newPwd : ''); ?>" type="password" class="form-control" name="newPwd" id="newPwd">
-                    <span class="error">* <?php echo $newPwdErr;?></span>
+                    <input value="<?php echo (isset($password) ? $password : ''); ?>" type="password" class="form-control" name="newPwd" id="newPwd">
+                    <span class="error">* </span>
+                    <label class="error"><?php echo $newPwdErr;?></label>
                 </div>
+
 
                 <div class="form-group">
                     <label class="label-text">Confirm password: </label>
                     <input value="<?php echo (isset($confirmPwd) ? $confirmPwd : ''); ?>" type="password" class="form-control" name="confirmPwd" id="confirmPwd">
-                    <span class="error">* <?php echo $confirmPwdErr;?></span>
+                    <span class="error">* </span>
+                    <label class="error"><?php echo $confirmPwdErr;?></label>
                 </div>
+
+                <div class="form-group">
+                    <label class="label-text">Administrator: </label>
+                    <input type="checkbox" name="Admin" id="Admin" class="Admin" value="Admin"><br/>
+                </div>
+
+
+
+
 
                 <div>
                     <button type="submit" class="btn btn-primary">Create</button>

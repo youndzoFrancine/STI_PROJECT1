@@ -43,6 +43,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                             $temp2 = $row['password'];
                         }
 
+
                         if ($temp1 == $email AND $temp2 == $password) {
                             header("Location: signup.php");
                         } else {
