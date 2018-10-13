@@ -1,4 +1,5 @@
 <?php include_once 'includes/auth.php'; ?>
+<?php include_once 'includes/config.php'; ?>
 <?php include_once 'includes/header.php'; ?>
 
     <body id="page-top">
@@ -26,20 +27,16 @@
                                 <?php
 
                                 $db = new PDO('sqlite:../databases/' . __DB_NAME);
-                                $query = " SELECT messages.id, 
-                                  u1.email AS email_exp, 
-                                  u2.email AS email_dst, 
-                                  subject, body, time 
-                                FROM messages 
-                                INNER JOIN users AS u1 
-                                  ON messages.id_sender = u1.id 
-                                INNER JOIN users AS u2 
-                                  ON messages.id_receiver = u2.id;";
-                                $messages = $db->query($query);
+                                $query = "SELECT * FROM users";
+                                $users = $db->query($query);
 
                                 if (empty($messages)) {
                                     echo 'No entry in database';
                                 } else {
+
+                                    echo "<pre>";
+                                    print_r($users);
+                                    echo "</pre>";
 
                                     echo '<table>';
 
