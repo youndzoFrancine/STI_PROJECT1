@@ -6,12 +6,9 @@ $emailErr = $newPwdErr = $confirmPwdErr = $warning = " ";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-
-
     if(empty($_POST['email']) OR empty($_POST['newPwd']) OR empty($_POST['confirmPwd'])){
         $warning="Please fulfill all fields";
     }
-
 
     if (!isset($_POST['email'])) {
         $emailErr = "Email is required";
@@ -21,16 +18,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = test_input($_POST['email']);
     }
 
-
     $password = test_input($_POST["newPwd"]);
-
     $confirmPwd = test_input($_POST["confirmPwd"]);
-
 
     if ($password !== $confirmPwd) {
         $confirmPwdErr = "Password is different";
-
-    }else{
+    } else{
         try {
 
             isset($_POST['Admin']) ? $isAdmin = 1 : $isAdmin = 0;
@@ -47,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 )
                         );
             */
-            $db = new PDO('sqlite:../databases/database.sqlite');
+            $db = new PDO('sqlite:../databases/' . __DB_NAME);
 
             if(!$db){
                 $warning='Unable to open a connection to the database';
