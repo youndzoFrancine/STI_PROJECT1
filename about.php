@@ -9,8 +9,6 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Business Casual - Start Bootstrap Theme</title>
-
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -49,8 +47,7 @@
   <body>
 
     <h1 class="site-heading text-center text-white d-none d-lg-block">
-      <span class="site-heading-upper text-primary mb-3">A Free Bootstrap 4 Business Theme</span>
-      <span class="site-heading-lower">Business Casual</span>
+      <span class="site-heading-lower">Inbox</span>
     </h1>
 
     <!-- Navigation -->
@@ -68,30 +65,40 @@
               </a>
             </li>
             <li class="nav-item active px-lg-4">
-              <a class="nav-link text-uppercase text-expanded" href="about.php">About</a>
+              <a class="nav-link text-uppercase text-expanded" href="about.php">Inbox</a>
             </li>
             <li class="nav-item px-lg-4">
-              <a class="nav-link text-uppercase text-expanded" href="products.php">Products</a>
+              <a class="nav-link text-uppercase text-expanded" href="products.php">Sent</a>
             </li>
             <li class="nav-item px-lg-4">
-              <a class="nav-link text-uppercase text-expanded" href="store.php">Store</a>
+              <a class="nav-link text-uppercase text-expanded" href="store.php">Admin</a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
 
+
+
+
+    <form action="/about.php" method="get">
+        <button name="subject" type="submit" value="HTML">Response</button>
+    </form>
+
+    <form action="/about.php" method="get">
+        <button name="subject" type="submit" value="HTML">Delete</button>
+    </form>
+    <form action="/about.php" method="get">
+        <button name="subject" type="submit" value="HTML">Details</button>
+    </form>
+
     <section class="page-section about-heading">
       <div class="container">
-        <img class="img-fluid rounded about-heading-img mb-3 mb-lg-0" src="img/about.jpg" alt="">
+
         <div class="about-heading-content">
           <div class="row">
             <div class="col-xl-9 col-lg-10 mx-auto">
               <div class="bg-faded rounded p-5">
-                <h2 class="section-heading mb-4">
-                  <span class="section-heading-upper">Strong Coffee, Strong Roots</span>
-                  <span class="section-heading-lower">About Our Cafe</span>
-                </h2>
                 <table>
 
                     <?php
@@ -150,12 +157,6 @@
         </div>
       </div>
     </section>
-
-    <footer class="footer text-faded text-center py-5">
-      <div class="container">
-        <p class="m-0 small">Copyright &copy; Your Website 2018</p>
-      </div>
-    </footer>
 
     <!-- Bootstrap core JavaScript -->
     <script src="vendor/jquery/jquery.min.js"></script>
