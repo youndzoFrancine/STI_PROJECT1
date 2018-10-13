@@ -1,3 +1,5 @@
+<?php include_once 'functions.php'; ?>
+
 <!-- Sidebar -->
 <ul class="sidebar navbar-nav">
     <li class="nav-item">
@@ -22,6 +24,17 @@
 
         </div>
     </li>
+
+    <?php if (isAdmin()) { ?>
+
+    <li class="nav-item active">
+        <a class="nav-link" href="users.php">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Utilisateurs</span></a>
+    </li>
+
+    <?php } ?>
+
     <li class="nav-item active">
         <a class="nav-link" href="login.php">
             <i class="fas fa-fw fa-table"></i>
