@@ -1,10 +1,12 @@
 <?php
+
 // define variables and set to empty values
 $email = $password = $confirmPwd = "";
+$emailErr = $newPwdErr = $confirmPwdErr = $warning = " ";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $emailErr = $newPwdErr = $confirmPwdErr = $warning = " ";
+
 
     if(empty($_POST['email']) OR empty($_POST['newPwd']) OR empty($_POST['confirmPwd'])){
         $warning="Please fulfill all fields";
@@ -32,6 +34,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         try {
 
             isset($_POST['Admin']) ? $isAdmin = 1 : $isAdmin = 0;
+            $format = 'Y-m-d H:i:s';
+            //$timestamp = time();
+            $registerDate =  date ($format);
+            $lastLoginDate = $registerDate;
             /*
                         $items = array(
                                 array(
@@ -47,10 +53,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $warning='Unable to open a connection to the database';
             }else {
 
+                $id=6;
 
-                $insert = $db->prepare('INSERT INTO users(email, password, isAdmin) VALUES (? , ?, ?)');
+                $insert = $db->prepare('INSERT INTO users(id, email, password, isAdmin, registerDate, lastLoginDate) VALUES (?, ?, ?, ?, ?, ?)');
 
-                $insert->execute(array($email, $password, $isAdmin));
+
+                $insert->execute(array($id, $email, $password, $isAdmin, $registerDate, $lastLoginDate));
                 //$stmt = $db->prepare($insert);
                 /*
                                 $stmt->bindParam(':email', $email);
@@ -98,7 +106,6 @@ function test_input($data) {
             <div class="form-group">
               <div class="form-label-group">
                 <input value="<?php echo (isset($email) ? $email : ''); ?>" name="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required="required">
-                  <span class="error">* </span>
                   <label class="error"><?php echo $emailErr;?></label>
                 <label for="inputEmail">Email address</label>
               </div>
@@ -108,7 +115,6 @@ function test_input($data) {
                 <div class="col-md-6">
                   <div class="form-label-group">
                     <input value="<?php echo (isset($password) ? $password : ''); ?>" name="newPwd" type="password" id="inputPassword" class="form-control" placeholder="Password" required="required">
-                      <span class="error">* </span>
                       <label class="error"><?php echo $newPwdErr;?></label>
                     <label for="inputPassword">Password</label>
                   </div>
@@ -116,7 +122,6 @@ function test_input($data) {
                 <div class="col-md-6">
                   <div class="form-label-group">
                     <input value="<?php echo (isset($confirmPwd) ? $confirmPwd : ''); ?>" name="confirmPwd" type="password" id="confirmPassword" class="form-control" placeholder="Confirm password" required="required">
-                      <span class="error">* </span>
                       <label class="error"><?php echo $confirmPwdErr;?></label>
                     <label for="confirmPassword">Confirm password</label>
                   </div>

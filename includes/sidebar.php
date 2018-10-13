@@ -19,10 +19,11 @@
             <h6 class="dropdown-header">Other Pages:</h6>
             <a class="dropdown-item" href="404.html">404 Page</a>
             <a class="dropdown-item" href="blank.html">Blank Page</a> -->
+
         </div>
     </li>
     <li class="nav-item active">
-        <a class="nav-link" href="messages.php">
+        <a class="nav-link" href="login.php">
             <i class="fas fa-fw fa-table"></i>
             <span>Logout</span></a>
     </li>
