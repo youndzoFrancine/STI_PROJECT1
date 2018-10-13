@@ -1,4 +1,13 @@
 <?php include_once 'includes/auth.php'; ?>
+<?php include_once 'includes/config.php'; ?>
+
+<?php
+
+$existingDir = array('inbox', 'sent');
+$dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET['dir'] : $defaultDir );
+
+?>
+
 <?php include_once 'includes/header.php'; ?>
 
     <body id="page-top">
@@ -17,7 +26,7 @@
                 <div class="card mb-3">
                     <div class="card-header">
                         <i class="fas fa-table"></i>
-                        Data Table Example
+                        Messages : <?php echo $dir; ?>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">

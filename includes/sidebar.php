@@ -28,9 +28,14 @@
     <?php if (isAdmin()) { ?>
 
     <li class="nav-item active">
-        <a class="nav-link" href="users.php">
-            <i class="fas fa-fw fa-table"></i>
-            <span>Utilisateurs</span></a>
+        <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Utilisateurs</span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="pagesDropdown">
+            <a class="dropdown-item" href="users.php">Lister</a>
+            <a class="dropdown-item" href="register.php">Ajouter</a>
+        </div>
     </li>
 
     <?php } ?>
