@@ -1,5 +1,5 @@
 <?php
- put at the top of each php page.
+
 session_start();
 if (!isset($_SESSION["Authenticated"]))
 {
