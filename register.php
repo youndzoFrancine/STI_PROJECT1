@@ -94,9 +94,18 @@ function test_input($data) {
 }
 ?>
 
+<?php include_once 'includes/auth.php'; ?>
 <?php include_once 'includes/header.php'; ?>
 
-  <body class="bg-dark">
+<body id="page-top">
+
+<?php include_once 'includes/banner.php'; ?>
+
+<div id="wrapper">
+
+<?php include_once 'includes/sidebar.php'; ?>
+
+    <div id="content-wrapper">
 
     <div class="container">
       <div class="card card-register mx-auto mt-5">
@@ -128,14 +137,20 @@ function test_input($data) {
                 </div>
               </div>
             </div>
+              <div class="form-group">
+                  <label class="label-text">Administrator: </label>
+                  <input type="checkbox" name="Admin" id="Admin" class="Admin" value="Admin"><br/>
+              </div>
               <input class="btn btn-primary btn-block" type="submit" value="Register" />
-              <!-- <a class="btn btn-primary btn-block" href="login.php">Register</a> -->
           </form>
-          <div class="text-center">
-            <a class="d-block small mt-3" href="login.php">Login Page</a>
-          </div>
         </div>
       </div>
     </div>
+    <!-- /#wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
 
 <?php include_once 'includes/footer.php'; ?>
