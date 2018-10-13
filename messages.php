@@ -34,7 +34,7 @@ $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET[
 
                                 <?php
 
-                                $db = new PDO('sqlite:../databases/database.sqlite');
+                                $db = new PDO('sqlite:../databases/' . __DB_NAME);
                                 $query = " SELECT messages.id, 
                                   u1.email AS email_exp, 
                                   u2.email AS email_dst, 
