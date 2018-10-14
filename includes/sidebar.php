@@ -41,6 +41,12 @@
     <?php } ?>
 
     <li class="nav-item active">
+        <a class="nav-link" href="session.php">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Session</span></a>
+    </li>
+
+    <li class="nav-item active">
         <a class="nav-link" href="login.php">
             <i class="fas fa-fw fa-table"></i>
             <span>Logout</span></a>

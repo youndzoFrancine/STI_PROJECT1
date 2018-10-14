@@ -2,5 +2,10 @@
 
 function isAdmin() {
 
-    return true;
+    if (!isset($_SESSION['user'])) {
+        return false;
+    }
+
+
+    return (($_SESSION['user']['isAdmin'] == 1) ? true : false);
 }
