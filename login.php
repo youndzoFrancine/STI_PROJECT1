@@ -1,11 +1,12 @@
 <?php
+session_start();
 include_once 'includes/config.php';
 
 if ( isset( $_GET['action'] ) ) {
     if ( $_GET['action'] == 'logout' ) {
         unset( $_SESSION['user'] );
         if ( session_destroy() ) {
-            header( "Location: login.php" );
+            header( "Location: " . __APP_URL . "/login.php" );
         }
     }
 }

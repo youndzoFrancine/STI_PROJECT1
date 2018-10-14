@@ -47,7 +47,7 @@
     </li>
 
     <li class="nav-item active">
-        <a class="nav-link" href="login.php">
+        <a class="nav-link" href="login.php?action=logout">
             <i class="fas fa-fw fa-table"></i>
             <span>Logout</span></a>
     </li>
