@@ -1,4 +1,5 @@
 <?php include_once 'includes/auth.php'; ?>
+<?php include_once 'includes/config.php'; ?>
 <?php include_once 'includes/header.php'; ?>
 
     <body id="page-top">
@@ -26,18 +27,9 @@
                                 <?php
 
                                 $db = new PDO('sqlite:../databases/' . __DB_NAME);
-                                $query = " SELECT messages.id, 
-                                  u1.email AS email_exp, 
-                                  u2.email AS email_dst, 
-                                  subject, body, time 
-                                FROM messages 
-                                INNER JOIN users AS u1 
-                                  ON messages.id_sender = u1.id 
-                                INNER JOIN users AS u2 
-                                  ON messages.id_receiver = u2.id;";
-                                $messages = $db->query($query);
+                                $users = $db->query("SELECT * FROM users");
 
-                                if (empty($messages)) {
+                                if (empty($users)) {
                                     echo 'No entry in database';
                                 } else {
 
@@ -45,24 +37,26 @@
 
                                     // Display headers
                                     echo '<th>ID</th>';
-                                    echo '<th>Expéditeur</th>';
-                                    echo '<th>Destinataire</th>';
-                                    echo '<th>Sujet</th>';
-                                    echo '<th>Corps du message</th>';
-                                    echo '<th>Date / heure</th>';
+                                    echo '<th>email</th>';
+                                    echo '<th>password</th>';
+                                    echo '<th>isAdmin</th>';
+                                    echo '<th>registerDate</th>';
+                                    echo '<th>lastLoginDate</th>';
+                                    echo '<th>isActiv</th>';
 
                                     // Iterate each record
-                                    foreach ($messages as $row) {
+                                    foreach ($users as $user) {
 
                                         // Start a row
                                         echo '<tr>';
 
-                                        echo '<td>' . $row["id"] . '</td>';
-                                        echo '<td>' . $row["email_exp"] . '</td>';
-                                        echo '<td>' . $row["email_dst"] . '</td>';
-                                        echo '<td>' . $row["subject"] . '</td>';
-                                        echo '<td>' . $row["body"] . '</td>';
-                                        echo '<td>' . $row["time"] . '</td>';
+                                        echo '<td>' . $user["id"] . '</td>';
+                                        echo '<td>' . $user["email"] . '</td>';
+                                        echo '<td>' . $user["password"] . '</td>';
+                                        echo '<td>' . $user["isAdmin"] . '</td>';
+                                        echo '<td>' . $user["registerDate"] . '</td>';
+                                        echo '<td>' . $user["lastLoginDate"] . '</td>';
+                                        echo '<td>' . $user["isActiv"] . '</td>';
 
                                         // end row
                                         echo '</tr>';

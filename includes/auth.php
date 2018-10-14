@@ -1,8 +1,10 @@
 <?php
 
 session_start();
-if (!isset($_SESSION["Authenticated"])) {
-    // header("location: http://sti.lozann.ch/login.php");
+include_once 'config.php';
+
+if (!isset($_SESSION["user"])) {
+    header("location: " . __APP_URL . "/login.php");
 }
 
 ?>

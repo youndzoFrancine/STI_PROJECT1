@@ -1,67 +1,52 @@
 <?php
+session_start();
+include_once 'includes/config.php';
 
 if ( isset( $_GET['action'] ) ) {
     if ( $_GET['action'] == 'logout' ) {
-        unset( $_SESSION['user_session'] );
+        unset( $_SESSION['user'] );
         if ( session_destroy() ) {
-            header( "Location: login.php" );
+            header( "Location: " . __APP_URL . "/login.php" );
         }
     }
 }
 
+// Make sure the HTTP method is POST
 if($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $warning = "";
+    // Both email & password should have been sent
+    if (isset($_POST['email']) && !empty($_POST['email']) &&
+        isset($_POST['password']) && !empty($_POST['password'])) {
 
-    if(empty($_POST['email']) OR empty($_POST['password'])){
-        $warning = "Please fulfill all fields";
-    }elseif (!isset($_POST['email']) OR !filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) OR !isset($_POST['password'])){
-        $warning = "Something is wrong";
-    }else{
-        $email = test_input($_POST['email']);
-        $password = test_input($_POST['password']);
+        // Validate email input
+        if (false === filter_var($_POST['email'], FILTER_SANITIZE_EMAIL)) {
+            $warning = "bad email";
+        } else {
 
-        try {
+            // Store POST vars
+            $email = trim($_POST['email']);
+            $password = $_POST['password'];
 
-            $db = new PDO('sqlite:../databases/database.sqlite');
+            // Init DB connection
+            $db = new PDO('sqlite:../databases/' . __DB_NAME);
+            $stmt = $db->prepare("SELECT * FROM `users` WHERE email = '" . $email . "' LIMIT 1;");
+            $result = $stmt->execute();
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if(!$db){
-                $warning='Unable to open a connection to the database';
-            }else {
-                $query = "SELECT * FROM users WHERE email = '$email';";
-                $result = $db->query($query);
+            if (!empty($user['password']) && $user['password'] == $password) {
+                $_SESSION['user']['id']   = $user['id'];
+                $_SESSION['user']['email'] = $user['email'];
+                $_SESSION['user']['isAdmin'] = $user['isAdmin'];
 
-                $temp1 = "";
-                $temp2 = "";
+                header("Location: " . __APP_URL);
 
-                if ($result) {
-                    foreach ($result as $row) {
-                        $temp1 = $row['email'];
-                        $temp2 = $row['password'];
-                    }
-
-
-                    if ($temp1 == $email AND $temp2 == $password) {
-                        header("Location: signup.php");
-                    } else {
-                        $warning = "Wrong credentials";
-                    }
-                }
+            } else {
+                $warning = 'Mmm sorry, wrong email / password combination';
             }
-
-
-        } catch (PDOException $e) {
-            echo $e->getMessage();
         }
-
+    } else {
+        $warning = "Bad login";
     }
-}
-
-function test_input($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
 }
 
 ?>
@@ -76,7 +61,6 @@ function test_input($data) {
         <div class="card-body">
 
             <div class="panel">
-                <p>Please enter your email and password</p>
                 <p><span class="warning" name="warning"><?php echo (isset($warning) ? $warning : ''); ?></span> </p>
             </div>
 
@@ -93,11 +77,8 @@ function test_input($data) {
                 <label for="inputPassword">Password</label>
               </div>
             </div>
-              <input type="submit" value="Login" class="btn btn-primary btn-block">
+            <input type="submit" value="Login" class="btn btn-primary btn-block">
           </form>
-          <div class="text-center">
-            <a class="d-block small mt-3" href="register.php">Register an Account</a>
-          </div>
         </div>
       </div>
     </div>
