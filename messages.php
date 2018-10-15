@@ -1,16 +1,21 @@
 <?php include_once 'includes/auth.php'; ?>
 <?php include_once 'includes/config.php'; ?>
+<?php include_once 'includes/functions.php'; ?>
+
 
 <?php
 
 $existingDir = array('inbox', 'sent');
 $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET['dir'] : $defaultDir );
 
+
 ?>
+
 
 <?php include_once 'includes/header.php'; ?>
 
     <body id="page-top">
+
 
 <?php include_once 'includes/banner.php'; ?>
 
@@ -28,6 +33,7 @@ $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET[
                         <i class="fas fa-table"></i>
                         Messages : <?php echo $dir; ?>
                     </div>
+
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
@@ -48,9 +54,12 @@ $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET[
                                   OR email_dst = '".$_SESSION['user']['email']."';";
                                 $messages = $db->query($query);
 
+                                
                                 if (empty($messages)) {
                                     echo 'No entry in database';
                                 } else {
+
+
 
                                     echo '<table>';
 
@@ -62,13 +71,13 @@ $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET[
                                     echo '<th>Corps du message</th>';
                                     echo '<th>Date / heure</th>';
                                     echo '<th>Répondre</th>';
-                                    echo '<th>Effacer</th>';
+                                    echo '<th>Supprimer</th>';
 
                                     // Iterate each record
                                     foreach ($messages as $row) {
-
                                         // Start a row
                                         echo '<tr>';
+                                        $row["body"]= truncate($row["body"],100);
 
                                         echo '<td>' . $row["id"] . '</td>';
                                         echo '<td>' . $row["email_exp"] . '</td>';
