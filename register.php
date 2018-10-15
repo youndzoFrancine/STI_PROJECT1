@@ -33,6 +33,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             //$timestamp = time();
             $registerDate =  date ($format);
             $lastLoginDate = $registerDate;
+            //$temp1 = date ($format);
+            //$temp2 = date ($format);
 
             $warning = date ($format);
             if(empty($warning) || !isset($warning)){
@@ -40,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
 
-            $id = 98978;
+            $id = 21;
             $isActive = 0;
 
             $user = array(
@@ -58,33 +60,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       VALUES (".$user['id'].",'".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
             $stmt = $db->prepare($query);
             $result = $stmt->execute();
-                /*
-                foreach ($items as $item){
-                    $insert = $db->exec("INSERT INTO `users` (id, email, password, registerDate, lastLoginDate, isAdmin, isActive) 
-                                      VALUES ('{$item['id']}', '{$item['email']}', '{$item['password']}', '{$item['registerDate']}', '{$item['lastLoginDate']}', '{$item['isAdmin']}', '{$item['isActive']}')");
-                }
-                */
-                
-
-
-                //$stmt = $db->prepare($insert);
-                /*
-                                $stmt->bindParam(':email', $email);
-                                $stmt->bindParam(':password', $password);
-                                $stmt->bindParam(':isAdmin', $isAdmin);
-
-                                foreach ($data as $item){
-                                    $email = $item['email'];
-                                    $password = $item['password'];
-                                    $isAdmin = $item['isAdmin'];
-
-                                $stmt->execute([
-                                        ':email' => $email,
-                                        ':password' => $password,
-                                        ':isAdmin' => $isAdmin,
-                                ]);
-                */
-
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
