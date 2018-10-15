@@ -31,6 +31,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
             $stmt = $db->prepare("SELECT * FROM `users` WHERE email = '" . $email . "' LIMIT 1;");
             $result = $stmt->execute();
+
+            if (!$stmt->execute()) {
+                echo "<pre>";
+                print_r($stmt->errorInfo());
+                echo "</pre>";
+            }
+
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!empty($user['password']) && $user['password'] == $password) {

@@ -70,6 +70,8 @@ $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET[
                                     echo '<th>Sujet</th>';
                                     echo '<th>Corps du message</th>';
                                     echo '<th>Date / heure</th>';
+                                    echo '<th>Répondre</th>';
+                                    echo '<th>Supprimer</th>';
 
                                     // Iterate each record
                                     foreach ($messages as $row) {
@@ -83,6 +85,8 @@ $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET[
                                         echo '<td>' . $row["subject"] . '</td>';
                                         echo '<td>' . $row["body"] . '</td>';
                                         echo '<td>' . $row["time"] . '</td>';
+                                        echo '<td><a href="" > <- </a></td>';
+                                        echo '<td><a href="" > x </a></td>';
 
                                         // end row
                                         echo '</tr>';
