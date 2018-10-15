@@ -33,6 +33,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             //$timestamp = time();
             $registerDate =  date ($format);
             $lastLoginDate = $registerDate;
+            //$temp1 = date ($format);
+            //$temp2 = date ($format);
 
             $warning = date ($format);
             if(empty($warning) || !isset($warning)){
@@ -45,24 +47,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $warning='Unable to open a connection to the database';
             }else {
 
+
                 $id = 21;
                 $isActive = 0;
 
+                $qry = $db->prepare("INSERT INTO users (id, email, password, registerDate, lastLoginDate, isAdmin, isActive) VALUES (?, ?, ?, ?, ?, ?, ?);");
+
+                echo "<pre>";
+                print_r($qry);
+                echo "</pre>";
+
+                $qry->execute(array($id, $email, $password, $registerDate, $lastLoginDate, $isAdmin, $isActive));
+
+                /*
                 $items = array(
                     array(
-                        'id' => $id,
-                        'email' => $email,
-                        'password' => $password,
-                        'registerDate' => $registerDate,
-                        'lastLoginDate' => $lastLoginDate,
-                        'isAdmin' => $isAdmin,
-                        'isActive' => $isActive
+                        'id' => 21,
+                        'email' => 'miguel.test@test.com',
+                        'password' => 'test',
+                        'registerDate' => $temp1,
+                        'lastLoginDate' => $temp2,
+                        'isAdmin' => 1,
+                        'isActive' => 0,
                     )
                 );
 
-                $insert = $db->prepare("INSERT INTO users (id, email, password, registerDate, lastLoginDate, isAdmin, isActive) VALUES ('{$item['id']}', '{$item['email']}', '{$item['password']}', '{$item['registerDate']}', '{$item['lastLoginDate']}', '{$item['isAdmin']}', '{$item['isActive']}')");
+                $insert = "INSERT INTO users (id, email, password, registerDate, lastLoginDate, isAdmin, isActive) VALUES (:id, :email, :password, :registerDate, :lastLoginDate, :isAdmin, :isActive)";
+                $statement = $db->prepare($insert);
 
-                $result = $insert->execute();
+                $stmt->bindParam(':id', $id);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':password', $password);
+                $stmt->bindParam(':registerDate', $registerDate);
+                $stmt->bindParam(':lastLoginDate', $lastLoginDate);
+                $stmt->bindParam(':isAdmin', $isAdmin);
+                $stmt->bindParam(':isActive', $isActive);
+
+                foreach($items as $item){
+                    $id = $item['id'];
+                    $email = $item['email'];
+                    $password = $item['password'];
+                    $registerDate = $item['registerDate'];
+                    $lastLoginDate = $item['lastLoginDate'];
+                    $isAdmin = $item['isAdmin'];
+                    $isActive = $item['isActive'];
+
+                    $stmt->execute();
+                }
+*/
+                //$result = $insert->execute();
                 /*
                 foreach ($items as $item){
                     $insert = $db->exec("INSERT INTO `users` (id, email, password, registerDate, lastLoginDate, isAdmin, isActive) 
