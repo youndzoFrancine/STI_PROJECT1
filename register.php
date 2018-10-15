@@ -39,30 +39,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 throw new PDOException($warning);
             }
 
+
+            $id = 98978;
+            $isActive = 0;
+
+            $user = array(
+                'id' => $id,
+                'email' => $email,
+                'password' => $password,
+                'registerDate' => $registerDate,
+                'lastLoginDate' => $lastLoginDate,
+                'isAdmin' => $isAdmin,
+                'isActiv' => $isActive
+            );
+
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
-
-            if(!$db){
-                $warning='Unable to open a connection to the database';
-            }else {
-
-                $id = 21;
-                $isActive = 0;
-
-                $items = array(
-                    array(
-                        'id' => $id,
-                        'email' => $email,
-                        'password' => $password,
-                        'registerDate' => $registerDate,
-                        'lastLoginDate' => $lastLoginDate,
-                        'isAdmin' => $isAdmin,
-                        'isActive' => $isActive
-                    )
-                );
-
-                $insert = $db->prepare("INSERT INTO users (id, email, password, registerDate, lastLoginDate, isAdmin, isActive) VALUES ('{$item['id']}', '{$item['email']}', '{$item['password']}', '{$item['registerDate']}', '{$item['lastLoginDate']}', '{$item['isAdmin']}', '{$item['isActive']}')");
-
-                $result = $insert->execute();
+            $query = "INSERT INTO users (`id`, `email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
+                      VALUES (".$user['id'].",'".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
+            $stmt = $db->prepare($query);
+            $result = $stmt->execute();
                 /*
                 foreach ($items as $item){
                     $insert = $db->exec("INSERT INTO `users` (id, email, password, registerDate, lastLoginDate, isAdmin, isActive) 
@@ -89,7 +84,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         ':isAdmin' => $isAdmin,
                                 ]);
                 */
-            }
 
         } catch (PDOException $e) {
             echo $e->getMessage();
