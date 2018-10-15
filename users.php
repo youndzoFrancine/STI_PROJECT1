@@ -1,5 +1,24 @@
 <?php include_once 'includes/auth.php'; ?>
 <?php include_once 'includes/config.php'; ?>
+
+<?php
+
+if (isset($_GET['action']) && !empty($_GET['action']) &&
+    isset($_GET['value']) && !empty($_GET['value']) &&
+    isset($_GET['uID']) && !empty($_GET['uID'])) {
+
+    $action = $_GET['action'];
+    $value = $_GET['value'];
+    $uID = $_GET['uID'];
+
+    // Init DB connection
+    $db = new PDO('sqlite:../databases/' . __DB_NAME);
+    $stmt = $db->prepare("UPDATE users SET ".$value." = NOT ".$value." WHERE users.id = ".$uID.";");
+    $result = $stmt->execute();
+}
+
+?>
+
 <?php include_once 'includes/header.php'; ?>
 
     <body id="page-top">
@@ -43,6 +62,8 @@
                                     echo '<th>registerDate</th>';
                                     echo '<th>lastLoginDate</th>';
                                     echo '<th>isActiv</th>';
+                                    echo '<th>activer / désactiver</th>';
+                                    echo '<th>grant admin / user</th>';
 
                                     // Iterate each record
                                     foreach ($users as $user) {
@@ -57,6 +78,8 @@
                                         echo '<td>' . $user["registerDate"] . '</td>';
                                         echo '<td>' . $user["lastLoginDate"] . '</td>';
                                         echo '<td>' . $user["isActiv"] . '</td>';
+                                        echo '<td><a href="' . __APP_URL . '/users.php?action=toggle&value=isAdmin&uID='.$user["id"].'">toggle isActiv</a></td>';
+                                        echo '<td><a href="' . __APP_URL . '/users.php?action=toggle&value=isActiv&uID='.$user["id"].'">toggle isAdmin</a></td>';
 
                                         // end row
                                         echo '</tr>';
