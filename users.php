@@ -4,17 +4,32 @@
 <?php
 
 if (isset($_GET['action']) && !empty($_GET['action']) &&
-    isset($_GET['value']) && !empty($_GET['value']) &&
     isset($_GET['uID']) && !empty($_GET['uID'])) {
 
+    $availableActions = array('remove', 'toggle');
     $action = $_GET['action'];
-    $value = $_GET['value'];
+    $value = ( (isset($_GET['value']) && !empty($_GET['value'])) ? $_GET['value'] : '' );
     $uID = $_GET['uID'];
 
     // Init DB connection
     $db = new PDO('sqlite:../databases/' . __DB_NAME);
-    $stmt = $db->prepare("UPDATE users SET ".$value." = NOT ".$value." WHERE users.id = ".$uID.";");
-    $result = $stmt->execute();
+
+    if (in_array($action, $availableActions) ) {
+
+        if (!empty($value) && $action == 'toggle') {
+            $stmt = $db->prepare("UPDATE users SET ".$value." = NOT ".$value." WHERE users.id = ".$uID.";");
+            $result = $stmt->execute();
+        } elseif ($action == 'remove') {
+            $stmt = $db->prepare("DELETE FROM users WHERE users.id = ".$uID.";");
+            $result = $stmt->execute();
+        }
+
+        if (!$stmt->execute()) {
+            echo "<pre>";
+            print_r($stmt->errorInfo());
+            echo "</pre>";
+        }
+    }
 }
 
 ?>
@@ -64,6 +79,7 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
                                     echo '<th>isActiv</th>';
                                     echo '<th>activer / désactiver</th>';
                                     echo '<th>grant admin / user</th>';
+                                    echo '<th>remove</th>';
 
                                     // Iterate each record
                                     foreach ($users as $user) {
@@ -80,6 +96,7 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
                                         echo '<td>' . $user["isActiv"] . '</td>';
                                         echo '<td><a href="' . __APP_URL . '/users.php?action=toggle&value=isAdmin&uID='.$user["id"].'">toggle isActiv</a></td>';
                                         echo '<td><a href="' . __APP_URL . '/users.php?action=toggle&value=isActiv&uID='.$user["id"].'">toggle isAdmin</a></td>';
+                                        echo '<td><a href="' . __APP_URL . '/users.php?action=remove&uID='.$user["id"].'">remove</a></td>';
 
                                         // end row
                                         echo '</tr>';
