@@ -1,5 +1,7 @@
 <?php
 
+include_once 'includes/config.php';
+
 // define variables and set to empty values
 $email = $password = $confirmPwd = "";
 $emailErr = $newPwdErr = $confirmPwdErr = $warning = " ";
@@ -31,27 +33,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             //$timestamp = time();
             $registerDate =  date ($format);
             $lastLoginDate = $registerDate;
-            /*
-                        $items = array(
-                                array(
-                                        'email' => $email,
-                                        'password' => $password,
-                                        'isAdmin' =>$isAdmin,
-                                )
-                        );
-            */
+
+            $warning = date ($format);
+            if(empty($warning) || !isset($warning)){
+                throw new PDOException($warning);
+            }
+
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
 
             if(!$db){
                 $warning='Unable to open a connection to the database';
             }else {
 
-                $id=6;
+                $id = 21;
+                $isActive = 0;
 
-                $insert = $db->prepare('INSERT INTO users(id, email, password, isAdmin, registerDate, lastLoginDate) VALUES (?, ?, ?, ?, ?, ?)');
+                $items = array(
+                    array(
+                        'id' => $id,
+                        'email' => $email,
+                        'password' => $password,
+                        'registerDate' => $registerDate,
+                        'lastLoginDate' => $lastLoginDate,
+                        'isAdmin' => $isAdmin,
+                        'isActive' => $isActive
+                    )
+                );
+
+                $insert = $db->prepare("INSERT INTO users (id, email, password, registerDate, lastLoginDate, isAdmin, isActive) VALUES ('{$item['id']}', '{$item['email']}', '{$item['password']}', '{$item['registerDate']}', '{$item['lastLoginDate']}', '{$item['isAdmin']}', '{$item['isActive']}')");
+
+                $result = $insert->execute();
+                /*
+                foreach ($items as $item){
+                    $insert = $db->exec("INSERT INTO `users` (id, email, password, registerDate, lastLoginDate, isAdmin, isActive) 
+                                      VALUES ('{$item['id']}', '{$item['email']}', '{$item['password']}', '{$item['registerDate']}', '{$item['lastLoginDate']}', '{$item['isAdmin']}', '{$item['isActive']}')");
+                }
+                */
+                
 
 
-                $insert->execute(array($id, $email, $password, $isAdmin, $registerDate, $lastLoginDate));
                 //$stmt = $db->prepare($insert);
                 /*
                                 $stmt->bindParam(':email', $email);
@@ -104,7 +124,7 @@ function test_input($data) {
       <div class="card card-register mx-auto mt-5">
         <div class="card-header">Register an Account</div>
         <div class="card-body">
-          <form>
+          <form action="register.php" method="POST">
             <div class="form-group">
               <div class="form-label-group">
                 <input value="<?php echo (isset($email) ? $email : ''); ?>" name="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required="required">
