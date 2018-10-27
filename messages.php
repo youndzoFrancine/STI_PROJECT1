@@ -8,7 +8,6 @@
 $existingDir = array('inbox', 'sent');
 $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET['dir'] : $defaultDir );
 
-
 ?>
 
 
@@ -41,7 +40,9 @@ $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET[
                                 <?php
 
                                 $db = new PDO('sqlite:../databases/' . __DB_NAME);
-                                $query = " SELECT messages.id, 
+
+                                // INBOX & Sent items
+                                /* $query = " SELECT messages.id,
                                   u1.email AS email_exp, 
                                   u2.email AS email_dst, 
                                   subject, body, time 
@@ -52,14 +53,42 @@ $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET[
                                   ON messages.id_receiver = u2.id
                                 WHERE email_exp = '".$_SESSION['user']['email']."' 
                                   OR email_dst = '".$_SESSION['user']['email']."';";
+                                $messages = $db->query($query); */
+
+                                if ($dir == 'sent') {
+
+                                    // Sent items
+                                    $query = " SELECT messages.id,
+                                                  u1.email AS email_exp, 
+                                                  u2.email AS email_dst, 
+                                                  subject, body, time 
+                                                FROM messages 
+                                                INNER JOIN users AS u1 
+                                                  ON messages.id_sender = u1.id 
+                                                INNER JOIN users AS u2 
+                                                  ON messages.id_receiver = u2.id
+                                                WHERE email_exp = '".$_SESSION['user']['email']."';";
+
+                                } elseif ($dir == 'inbox') {
+
+                                    // Inbox
+                                    $query = " SELECT messages.id,
+                                                  u1.email AS email_exp, 
+                                                  u2.email AS email_dst, 
+                                                  subject, body, time 
+                                                FROM messages 
+                                                INNER JOIN users AS u1 
+                                                  ON messages.id_sender = u1.id 
+                                                INNER JOIN users AS u2 
+                                                  ON messages.id_receiver = u2.id
+                                                WHERE email_dst = '".$_SESSION['user']['email']."';";
+                                }
+
                                 $messages = $db->query($query);
 
-                                
                                 if (empty($messages)) {
                                     echo 'No entry in database';
                                 } else {
-
-
 
                                     echo '<table>';
 
