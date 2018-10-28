@@ -3,9 +3,11 @@
 
 <?php
 
+// Users management
 if (isset($_GET['action']) && !empty($_GET['action']) &&
     isset($_GET['uID']) && !empty($_GET['uID'])) {
 
+    // Allowed actions
     $availableActions = array('remove', 'toggle');
     $action = $_GET['action'];
     $value = ( (isset($_GET['value']) && !empty($_GET['value'])) ? $_GET['value'] : '' );
@@ -14,21 +16,27 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
     // Init DB connection
     $db = new PDO('sqlite:../databases/' . __DB_NAME);
 
+    // Make sure the action is allowed
     if (in_array($action, $availableActions) ) {
 
+        // Toogle 1 | 0 value
         if (!empty($value) && $action == 'toggle') {
             $stmt = $db->prepare("UPDATE users SET ".$value." = NOT ".$value." WHERE users.id = ".$uID.";");
-            $result = $stmt->execute();
         } elseif ($action == 'remove') {
             $stmt = $db->prepare("DELETE FROM users WHERE users.id = ".$uID.";");
-            $result = $stmt->execute();
         }
 
+        // Something bad happened
         if (!$stmt->execute()) {
             echo "<pre>";
             print_r($stmt->errorInfo());
             echo "</pre>";
+            
+            exit(1);
         }
+
+        // Successfully done
+        header("Location: " . $_SERVER['PHP_SELF'] );
     }
 }
 
@@ -71,10 +79,8 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
 
                                     // Display headers
                                     echo '<th>Login / email</th>';
-                                    echo '<th>Admin</th>';
                                     echo '<th>registerDate</th>';
                                     echo '<th>lastLoginDate</th>';
-                                    echo '<th>Activ</th>';
                                     echo '<th colspan="3">Actions</th>';
 
                                     // Iterate each record
@@ -83,16 +89,17 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
                                         // Start a row
                                         echo '<tr>';
 
-                                        // echo '<td>' . $user["id"] . '</td>';
                                         echo '<td>' . $user["email"] . '</td>';
-                                        // echo '<td>' . $user["password"] . '</td>';
-                                        echo '<td>' . ( $user["isAdmin"] ? "yes" : "no" ) . '</td>';
                                         echo '<td>' . $user["registerDate"] . '</td>';
                                         echo '<td>' . $user["lastLoginDate"] . '</td>';
-                                        echo '<td>' . ( $user["isActiv"] ? "yes" : "no" ) . '</td>';
 
-                                        echo '<td><a class="btn btn-primary" href="' . __APP_URL . '/users.php?action=toggle&value=isAdmin&uID='.$user["id"].'" role="button">Toggle activ</a></td>';
-                                        echo '<td><a class="btn btn-primary" href="' . __APP_URL . '/users.php?action=toggle&value=isActiv&uID='.$user["id"].'" role="button">Toggle admin</a></td>';
+                                        $classActiv = ( ( $user["isActiv"] == 1 ) ? "primary" : "secondary" );
+                                        $classAdmin = ( ( $user["isAdmin"] == 1 ) ? "primary" : "secondary" );
+                                        $textActiv = ( ( $user["isActiv"] == 1 ) ? "actif" : "inactif" );
+                                        $textAdmin = ( ( $user["isAdmin"] == 1 ) ? "admin" : "collabo" );
+
+                                        echo '<td><a class="btn btn-'.$classAdmin.'" href="' . __APP_URL . '/users.php?action=toggle&value=isAdmin&uID='.$user["id"].'" role="button">'.$textAdmin.'</a></td>';
+                                        echo '<td><a class="btn btn-'.$classActiv.'" href="' . __APP_URL . '/users.php?action=toggle&value=isActiv&uID='.$user["id"].'" role="button">'.$textActiv.'</a></td>';
                                         echo '<td><a class="btn btn-danger" href="' . __APP_URL . '/users.php?action=remove&uID='.$user["id"].'" >Remove</a></td>';
 
                                         // end row
@@ -106,7 +113,6 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
                             </table>
                         </div>
                     </div>
-                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
                 </div>
 
             </div>
