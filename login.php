@@ -65,6 +65,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user']['email'] = $user['email'];
                 $_SESSION['user']['isAdmin'] = $user['isAdmin'];
 
+                $format = 'Y-m-d H:i:s';
+                $now =  date ($format);
+                $stmt = $db->prepare("UPDATE users SET lastLoginDate = '" . $now . "' WHERE id = " . $_SESSION['user']['id'] . ";");
+
+                // Something bad happened
+                if (!$stmt->execute()) {
+                    echo "<pre>";
+                    print_r($stmt->errorInfo());
+                    echo "</pre>";
+
+                    exit(1);
+                }
+
                 header("Location: " . __APP_URL);
             } else {
                 $warning = 'Mmm sorry, wrong email / password combination';

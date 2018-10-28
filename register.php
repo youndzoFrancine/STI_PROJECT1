@@ -73,7 +73,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             isset($_POST['Admin']) ? $isAdmin = 1 : $isAdmin = 0;
             $format = 'Y-m-d H:i:s';
             $registerDate =  date ($format);
-            $lastLoginDate = $registerDate;
 
             $warning = date ($format);
             if(empty($warning) || !isset($warning)){
@@ -87,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'email' => $email,
                 'password' => $password,
                 'registerDate' => $registerDate,
-                'lastLoginDate' => $lastLoginDate,
+                'lastLoginDate' => '',
                 'isAdmin' => $isAdmin,
                 'isActiv' => $isActiv
             );
@@ -111,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit(1);
             }
 
-            header("Location: " . $_SERVER['PHP_SELF'] . "?result=success");
+            header("Location: " . $_SERVER['PHP_SELF'] . "?action=passwd&result=success");
 
         } catch (PDOException $e) {
             echo $e->getMessage();
@@ -138,11 +137,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <?php
 
-        if (isset($_GET['result'])) {
+        if (isset($_GET['result']) && isset($_GET['action'])) {
             switch ($_GET['result']) {
                 case 'success':
                     $class = 'success';
-                    $msg = 'User has been successfully updated';
+                    if ($_GET['action'] == 'passwd') {
+                        $msg = 'User password has been successfully updated';
+                    } elseif ($_GET['action'] == 'register') {
+                        $msg = 'User has been successfully registered';
+                    }
             }
 
             echo '<div class="alert alert-'.$class.'" role="alert">';

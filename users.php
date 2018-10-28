@@ -108,7 +108,7 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
 
                                         echo '<td>' . $user["email"] . '</td>';
                                         echo '<td>' . $user["registerDate"] . '</td>';
-                                        echo '<td>' . $user["lastLoginDate"] . '</td>';
+                                        echo '<td>' . ( empty($user["lastLoginDate"]) ? "never" : $user["lastLoginDate"] ) . '</td>';
 
                                         $classActiv = ( ( $user["isActiv"] == 1 ) ? "primary" : "secondary" );
                                         $classAdmin = ( ( $user["isAdmin"] == 1 ) ? "primary" : "secondary" );

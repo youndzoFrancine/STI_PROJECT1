@@ -29,6 +29,12 @@
 
         <div class="container-fluid">
 
+            <div class="row">
+                <div class="col-auto">
+                    <h4>Welcome back <?php echo $_SESSION['user']['email']; ?> !</h4>
+                </div>
+            </div>
+
         </div>
         <!-- /.container-fluid -->
 
