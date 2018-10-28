@@ -41,8 +41,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 throw new PDOException($warning);
             }
 
+            $db = new PDO('sqlite:../databases/' . __DB_NAME);
+            
 
-            $id = 21;
             $isActive = 0;
 
             $user = array(
@@ -56,10 +57,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             );
 
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
-            $query = "INSERT INTO users (`id`, `email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
-                      VALUES (".$user['id'].",'".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
+            $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
+                      VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
             $stmt = $db->prepare($query);
             $result = $stmt->execute();
+
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
