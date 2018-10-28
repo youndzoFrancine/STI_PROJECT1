@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
             $isActiv = 0;
             $user = array(
-                'id' => $id,
+                //'id' => $id,
                 'email' => $email,
                 'password' => $password,
                 'registerDate' => $registerDate,
@@ -54,10 +54,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             );
 
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
-            $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
+
+            //DELETE FROM messages WHERE messages.id = ".$mID.";"
+
+            //$query = "SELECT * FROM users WHERE users.email = '".$user['email']."';";
+
+            //$stmt = $db->prepare($query);
+            //print_r($stmt->errorInfo());
+            //$result = $stmt->execute();
+/*
+            if ($stmt->execute()) {
+                echo "<pre>";
+                print_r($stmt->errorInfo());
+                echo "</pre>";
+            }else{*/
+                $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
                       VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
-            $stmt = $db->prepare($query);
-            $result = $stmt->execute();
+                $stmt = $db->prepare($query);
+                $result = $stmt->execute();
+            //}
 
         } catch (PDOException $e) {
             echo $e->getMessage();
