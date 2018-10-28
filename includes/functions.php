@@ -22,3 +22,10 @@ function truncate($text, $chars = 25) {
 
     return $text;
 }
+
+function test_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
