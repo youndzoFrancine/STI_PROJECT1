@@ -77,9 +77,6 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
                                     echo '<th>registerDate</th>';
                                     echo '<th>lastLoginDate</th>';
                                     echo '<th>isActiv</th>';
-                                    echo '<th>activer / désactiver</th>';
-                                    echo '<th>grant admin / user</th>';
-                                    echo '<th>remove</th>';
 
                                     // Iterate each record
                                     foreach ($users as $user) {
@@ -94,9 +91,6 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
                                         echo '<td>' . $user["registerDate"] . '</td>';
                                         echo '<td>' . $user["lastLoginDate"] . '</td>';
                                         echo '<td>' . $user["isActiv"] . '</td>';
-                                        echo '<td><a href="' . __APP_URL . '/users.php?action=toggle&value=isAdmin&uID='.$user["id"].'">toggle isActiv</a></td>';
-                                        echo '<td><a href="' . __APP_URL . '/users.php?action=toggle&value=isActiv&uID='.$user["id"].'">toggle isAdmin</a></td>';
-                                        echo '<td><a href="' . __APP_URL . '/users.php?action=remove&uID='.$user["id"].'">remove</a></td>';
 
                                         // end row
                                         echo '</tr>';
