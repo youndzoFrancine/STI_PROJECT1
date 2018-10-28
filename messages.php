@@ -20,13 +20,14 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
 
         if ($action == 'delete') {
             $stmt = $db->prepare("DELETE FROM messages WHERE messages.id = ".$mID.";");
-            $result = $stmt->execute();
         }
 
         if (!$stmt->execute()) {
             echo "<pre>";
             print_r($stmt->errorInfo());
             echo "</pre>";
+        } else {
+            header("Location: " . $_SERVER['PHP_SELF'] . "?result=success");
         }
     }
 }
@@ -48,6 +49,22 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
         <div id="content-wrapper">
 
             <div class="container-fluid">
+
+                <?php
+
+                if (isset($_GET['result'])) {
+                    switch ($_GET['result']) {
+                        case 'success':
+                            $class = 'success';
+                            $msg = 'Message has been successfully deleted';
+                    }
+
+                    echo '<div class="alert alert-'.$class.'" role="alert">';
+                    echo $msg;
+                    echo '</div>';
+                }
+
+                ?>
 
                 <!-- DataTables Example -->
                 <div class="card mb-3">
@@ -161,7 +178,6 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
                             </table>
                         </div>
                     </div>
-                    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
                 </div>
 
             </div>
