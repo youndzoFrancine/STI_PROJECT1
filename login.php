@@ -30,12 +30,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             // Init DB connection
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
             $stmt = $db->prepare("SELECT * FROM `users` WHERE email = '" . $email . "' AND isActiv = '1' LIMIT 1;");
-            $result = $stmt->execute();
 
+            // Something bad happened
             if (!$stmt->execute()) {
                 echo "<pre>";
                 print_r($stmt->errorInfo());
                 echo "</pre>";
+
+                exit(1);
             }
 
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -46,7 +48,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['user']['isAdmin'] = $user['isAdmin'];
 
                 header("Location: " . __APP_URL);
-
             } else {
                 $warning = 'Mmm sorry, wrong email / password combination';
             }

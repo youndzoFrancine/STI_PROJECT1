@@ -62,21 +62,8 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
 
                                 <?php
 
+                                // Init handle on DB
                                 $db = new PDO('sqlite:../databases/' . __DB_NAME);
-
-                                // INBOX & Sent items
-                                /* $query = " SELECT messages.id,
-                                  u1.email AS email_exp, 
-                                  u2.email AS email_dst, 
-                                  subject, body, time 
-                                FROM messages 
-                                INNER JOIN users AS u1 
-                                  ON messages.id_sender = u1.id 
-                                INNER JOIN users AS u2 
-                                  ON messages.id_receiver = u2.id
-                                WHERE email_exp = '".$_SESSION['user']['email']."' 
-                                  OR email_dst = '".$_SESSION['user']['email']."';";
-                                $messages = $db->query($query); */
 
                                 if ($dir == 'sent') {
 
@@ -132,7 +119,7 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
                                         echo '<td>' . $row["email_exp"] . '</td>';
                                         echo '<td>' . $row["subject"] . '</td>';
                                         echo '<td><a class="btn btn-secondary" href="#" role="button" data-toggle="modal" data-target="#mID' . $row["id"] . '">Détails</a></td>';
-                                        echo '<td><a class="btn btn-primary" href="#" role="button">Répondre</a></td>';
+                                        echo '<td><a class="btn btn-primary" href="formulaire.php?action=reply&mID=' . $row["id"] . '" role="button">Répondre</a></td>';
                                         echo '<td><a class="btn btn-danger" href="messages.php?action=delete&mID=' . $row["id"] . '" >Supprimer</a></td>';
 
                                         ?>
@@ -155,7 +142,7 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
                                               </div>
                                               <div class="modal-footer">
                                                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <a class="btn btn-primary" href="#" role="button">Répondre</a>
+                                                <a class="btn btn-primary" href="formulaire.php?action=reply&mID=<?php echo $row["id"]; ?>" role="button">Répondre</a>
                                                 <a class="btn btn-danger" href="messages.php?action=delete&mID=<?php echo $row["id"]; ?>">Supprimer</a>
                                               </div>
                                             </div>

@@ -2,6 +2,36 @@
 
 <?php
 
+// Replying email
+if (isset($_GET['action']) && isset($_GET['mID'])) {
+
+    $mID = $_GET['mID'];
+    $action = $_GET['action'];
+
+    // Init DB connection
+    $db = new PDO('sqlite:../databases/' . __DB_NAME);
+    $stmt = $db->prepare("SELECT subject, body, time, email 
+                                    FROM messages 
+                                    INNER JOIN users 
+                                      ON users.id = messages.id_sender
+                                    WHERE messages.id = '".$mID."';");
+    if (!$stmt->execute()) {
+        echo "<pre>";
+        print_r($stmt->errorInfo());
+        echo "</pre>";
+
+        exit(1);
+    }
+
+    $msg = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (empty($msg['id'])) {
+        echo "No such message ID";
+    }
+
+    $msg['body'] = "\n\nOriginal message : \n\n" . $msg['body'];
+}
+
+// Sending email
 if (isset($_POST['to']) && isset($_POST['subject']) && isset($_POST['message'])) {
 
     $senderID = $_SESSION["user"]["id"];
@@ -19,12 +49,12 @@ if (isset($_POST['to']) && isset($_POST['subject']) && isset($_POST['message']))
 
             // Check first if the recipient address is already in DB
             $stmt = $db->prepare("SELECT id FROM `users` WHERE email = '" . $recipientEmail . "' AND isActiv = '1' LIMIT 1;");
-            $result = $stmt->execute();
-
             if (!$stmt->execute()) {
                 echo "<pre>";
                 print_r($stmt->errorInfo());
                 echo "</pre>";
+
+                exit(1);
             }
 
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -32,10 +62,16 @@ if (isset($_POST['to']) && isset($_POST['subject']) && isset($_POST['message']))
             // If not in database, let's add him
             if (empty($user['id'])) {
                 $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
-                      VALUES ('".$recipientEmail."','','','',0,0);";
+                      VALUES ('".$recipientEmail."','','".$mailDate."','',0,0);";
 
                 $stmt = $db->prepare($query);
-                $result = $stmt->execute();
+                if (!$stmt->execute()) {
+                    echo "<pre>";
+                    print_r($stmt->errorInfo());
+                    echo "</pre>";
+
+                    exit(1);
+                }
                 $recipientID = $db->lastInsertId();
             } else {
                 $recipientID = $user['id'];
@@ -46,7 +82,13 @@ if (isset($_POST['to']) && isset($_POST['subject']) && isset($_POST['message']))
                       VALUES ('".$senderID."','".$recipientID."','".$subject."','".$body."','".$mailDate."');";
 
                 $stmt = $db->prepare($query);
-                $result = $stmt->execute();
+                if (!$stmt->execute()) {
+                    echo "<pre>";
+                    print_r($stmt->errorInfo());
+                    echo "</pre>";
+
+                    exit(1);
+                }
             }
 
         } catch (PDOException $e) {
@@ -76,17 +118,19 @@ if (isset($_POST['to']) && isset($_POST['subject']) && isset($_POST['message']))
                     <form action="formulaire.php" method="POST">
                         <div class="form-group">
                             <div class="col-sm-10">
-                                <input type="email" class="form-control" id="to" name="to" placeholder="Recipient mail address" required="required">
+                                <input value="<?php echo ( isset($msg) ? $msg['email'] : "" ) ?>" type="email" class="form-control" id="to" name="to" placeholder="Recipient mail address" required="required">
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject" required="required">
+                                <input value="Re : <?php echo ( isset($msg) ? $msg['subject'] : "" ) ?>" type="text" class="form-control" id="subject" name="subject" placeholder="Subject" required="required">
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-10">
-                                <textarea class="form-control" rows="4" name="message" placeholder="Message body" required="required"></textarea>
+                                <textarea class="form-control" rows="10" name="message" placeholder="Message body" required="required">
+                                    <?php echo ( isset($msg) ? $msg['body'] : "" ) ?>
+                                </textarea>
                             </div>
                         </div>
                         <div class="form-group">

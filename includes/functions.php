@@ -22,3 +22,14 @@ function truncate($text, $chars = 25) {
 
     return $text;
 }
+
+//des commentaires, du remplissage par des espaces et les
+// noms de domaine sans point qui ne sont pas pris en charge.
+function test_input($data) {
+
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+
+    return $data;
+}

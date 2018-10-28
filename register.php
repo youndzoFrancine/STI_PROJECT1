@@ -1,6 +1,7 @@
 <?php
 
 include_once 'includes/auth.php';
+include_once 'includes/functions.php';
 
 // define variables and set to empty values
 $email = $password = $confirmPwd = "";
@@ -30,13 +31,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             isset($_POST['Admin']) ? $isAdmin = 1 : $isAdmin = 0;
             $format = 'Y-m-d H:i:s';
-            //$timestamp = time();
             $registerDate =  date ($format);
             $lastLoginDate = $registerDate;
-            //$temp1 = date ($format);
-            //$temp2 = date ($format);
-
             $warning = date ($format);
+
             if(empty($warning) || !isset($warning)){
                 throw new PDOException($warning);
             }
@@ -44,7 +42,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
             $isActiv = 0;
             $user = array(
-                //'id' => $id,
                 'email' => $email,
                 'password' => $password,
                 'registerDate' => $registerDate,
@@ -54,25 +51,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             );
 
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
-
-            //DELETE FROM messages WHERE messages.id = ".$mID.";"
-
-            //$query = "SELECT * FROM users WHERE users.email = '".$user['email']."';";
-
-            //$stmt = $db->prepare($query);
-            //print_r($stmt->errorInfo());
-            //$result = $stmt->execute();
-/*
-            if ($stmt->execute()) {
+            $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
+                  VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
+            $stmt = $db->prepare($query);
+            if (!$stmt->execute()) {
                 echo "<pre>";
                 print_r($stmt->errorInfo());
                 echo "</pre>";
-            }else{*/
-                $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
-                      VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
-                $stmt = $db->prepare($query);
-                $result = $stmt->execute();
-            //}
+
+                exit(1);
+            }
 
         } catch (PDOException $e) {
             echo $e->getMessage();
@@ -80,14 +68,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-//des commentaires, du remplissage par des espaces et les
-// noms de domaine sans point qui ne sont pas pris en charge.
-function test_input($data) {
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
-}
 ?>
 
 <?php include_once 'includes/header.php'; ?>
