@@ -1,3 +1,19 @@
+<?php
+
+/**
+ * @file        formulaire.php
+ *
+ * @description This file is used to change the password of an account. It can be used by a
+ *              user to change is own password or by an admin to change the password of somebody.
+ *
+ * @version     PHP version 5.5.9
+ *
+ * @author      Francine Vanessa Youndzo Kengne
+ * @author      Cyril de Bourgues
+ * @author      Nuno Miguel Cerca Abrantes Sivla
+ */
+?>
+
 <?php include_once 'includes/auth.php'; ?>
 
 <?php
