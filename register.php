@@ -54,31 +54,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             );
 
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
-
-            //DELETE FROM messages WHERE messages.id = ".$mID.";"
-
-            //$query = "SELECT * FROM users WHERE users.email = '".$user['email']."';";
-
-            //$stmt = $db->prepare($query);
-            //print_r($stmt->errorInfo());
-            //$result = $stmt->execute();
-/*
-            if ($stmt->execute()) {
-                echo "<pre>";
-                print_r($stmt->errorInfo());
-                echo "</pre>";
-            }else{*/
-                $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
+            $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
                       VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
-                $stmt = $db->prepare($query);
-                $result = $stmt->execute();
-            //}
+            $stmt = $db->prepare($query);
+            $result = $stmt->execute();
 
         } catch (PDOException $e) {
             echo $e->getMessage();
         }
     }
 }
+
 
 //des commentaires, du remplissage par des espaces et les
 // noms de domaine sans point qui ne sont pas pris en charge.
@@ -88,6 +74,7 @@ function test_input($data) {
     $data = htmlspecialchars($data);
     return $data;
 }
+
 ?>
 
 <?php include_once 'includes/header.php'; ?>
