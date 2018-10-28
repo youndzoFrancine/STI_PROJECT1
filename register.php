@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
-            $isActiv = 0;
+            $isActiv = 1;
             $user = array(
                 //'id' => $id,
                 'email' => $email,
