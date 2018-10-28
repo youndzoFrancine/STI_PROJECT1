@@ -1,12 +1,10 @@
 <?php
 
 /**
- * @file        login.php
+ * @file        register.php
  *
- * @description This file displays the login page. It verifies that the user has entered an email address.
- *              Then it makes a request to the database to check if the user credentials are correct or not.
- *              If the credentials are correct the home page is displayed otherwise an error message is
- *              displayed in the login page.
+ * @description This file is used by the admin to add new users in the applications.
+ *              An email address and a password are required to create a new user.
  *
  * @version     PHP version 5.5.9
  *
@@ -31,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $warning="Please fulfill all fields";
     }
 
+    // Check email
     if (!isset($_POST['email'])) {
         $emailErr = "Email is required";
     } elseif (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)){
@@ -42,6 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = test_input($_POST["newPwd"]);
     $confirmPwd = test_input($_POST["confirmPwd"]);
 
+    // Verify that the password and the confirmation are the same
     if ($password !== $confirmPwd) {
         $confirmPwdErr = "Password is different";
     } else{
@@ -49,11 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             isset($_POST['Admin']) ? $isAdmin = 1 : $isAdmin = 0;
             $format = 'Y-m-d H:i:s';
-            //$timestamp = time();
             $registerDate =  date ($format);
             $lastLoginDate = $registerDate;
-            //$temp1 = date ($format);
-            //$temp2 = date ($format);
 
             $warning = date ($format);
             if(empty($warning) || !isset($warning)){
@@ -74,11 +71,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
 
+            // Request to insert a new user in the DB
             $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
                       VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
             $stmt = $db->prepare($query);
             $result = $stmt->execute();
 
+            // Check if the users if add or not
             if($result){
                 $email = '';
                 $password = '';

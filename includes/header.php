@@ -1,3 +1,18 @@
+<?php
+
+/**
+ * @file        copyright.php
+ *
+ * @description This file displays is the header of the application.
+ *
+ * @version     PHP version 5.5.9
+ *
+ * @author      Francine Vanessa Youndzo Kengne
+ * @author      Cyril de Bourgues
+ * @author      Nuno Miguel Cerca Abrantes Sivla
+ */
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 

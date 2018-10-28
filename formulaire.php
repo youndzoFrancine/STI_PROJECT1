@@ -3,8 +3,8 @@
 /**
  * @file        formulaire.php
  *
- * @description This file is used to change the password of an account. It can be used by a
- *              user to change is own password or by an admin to change the password of somebody.
+ * @description This file is used to create a message and to send it.
+ *
  *
  * @version     PHP version 5.5.9
  *
@@ -50,6 +50,7 @@ if (isset($_GET['action']) && isset($_GET['mID'])) {
 // Sending email
 if (isset($_POST['to']) && isset($_POST['subject']) && isset($_POST['message'])) {
 
+    // Recover the information of the email write by the user
     $senderID = $_SESSION["user"]["id"];
     $recipientEmail = $_POST['to'];
     $subject = $_POST['subject'];

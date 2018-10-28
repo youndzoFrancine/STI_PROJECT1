@@ -1,12 +1,11 @@
 <?php
 
 /**
- * @file        login.php
+ * @file        users.php
  *
- * @description This file displays the login page. It verifies that the user has entered an email address.
- *              Then it makes a request to the database to check if the user credentials are correct or not.
- *              If the credentials are correct the home page is displayed otherwise an error message is
- *              displayed in the login page.
+ * @description This file displays all the users with an account (active or not) in the application. Only
+ *              administrators can see this page. They can activate/deactivate a user, give the admin permissions
+ *              or remove it and delete the account.
  *
  * @version     PHP version 5.5.9
  *

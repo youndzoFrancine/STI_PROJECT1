@@ -1,3 +1,19 @@
+<?php
+
+/**
+ * @file        copyright.php
+ *
+ * @description This file is the sidebar of the application. There are the links for the different
+ *              pages of the application and for the logout.
+ *
+ * @version     PHP version 5.5.9
+ *
+ * @author      Francine Vanessa Youndzo Kengne
+ * @author      Cyril de Bourgues
+ * @author      Nuno Miguel Cerca Abrantes Sivla
+ */
+?>
+
 <?php include_once 'functions.php'; ?>
 
 <!-- Sidebar -->
