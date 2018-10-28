@@ -115,6 +115,7 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
                                         $textActiv = ( ( $user["isActiv"] == 1 ) ? "actif" : "inactif" );
                                         $textAdmin = ( ( $user["isAdmin"] == 1 ) ? "admin" : "collabo" );
 
+                                        echo '<td><a class="btn btn-dark" href="' . __APP_URL . '/register.php?action=passwd&uID='.$user["id"].'" role="button">Set password</a></td>';
                                         echo '<td><a class="btn btn-'.$classAdmin.'" href="' . __APP_URL . '/users.php?action=toggle&value=isAdmin&uID='.$user["id"].'" role="button">'.$textAdmin.'</a></td>';
                                         echo '<td><a class="btn btn-'.$classActiv.'" href="' . __APP_URL . '/users.php?action=toggle&value=isActiv&uID='.$user["id"].'" role="button">'.$textActiv.'</a></td>';
                                         echo '<td><a class="btn btn-danger" href="' . __APP_URL . '/users.php?action=remove&uID='.$user["id"].'" >Remove</a></td>';

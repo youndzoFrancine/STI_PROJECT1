@@ -49,6 +49,14 @@
         </div>
     </li>
 
+    <?php } else { ?>
+
+    <li class="nav-item active">
+        <a class="nav-link" href="register.php?action=passwd&uID=<?php echo $_SESSION['user']['id']; ?>">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Change password</span></a>
+    </li>
+
     <?php } ?>
 
     <li class="nav-item active">

@@ -20,8 +20,31 @@ include_once 'includes/auth.php';
 include_once 'includes/functions.php';
 
 // define variables and set to empty values
-$email = $password = $confirmPwd = "";
+$password = $confirmPwd = "";
 $emailErr = $newPwdErr = $confirmPwdErr = $warning = " ";
+$email = ( ( ! isAdmin() ) ? $_SESSION['user']['email'] : "" );
+
+if (isset($_GET['action']) && isset($_GET['uID'])) {
+
+    if ($_GET['action'] == 'passwd') {
+
+        $uID = $_GET['uID'];
+
+        // Init DB connection
+        $db = new PDO('sqlite:../databases/' . __DB_NAME);
+        $stmt = $db->prepare("SELECT email FROM users WHERE id = ".$uID.";");
+        if (!$stmt->execute()) {
+            echo "<pre>";
+            print_r($stmt->errorInfo());
+            echo "</pre>";
+
+            exit(1);
+        }
+
+        $userInfo = $stmt->fetch(PDO::FETCH_ASSOC);
+        $email = $userInfo['email'];
+    }
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -72,20 +95,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
 
             // Request to insert a new user in the DB
-            $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
-                      VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
-            $stmt = $db->prepare($query);
-            $result = $stmt->execute();
+            $query = "INSERT OR IGNORE INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
+                      VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");
+                      UPDATE users SET password = '".$user['password']."' WHERE email LIKE '".$user['email']."';";
 
-            // Check if the users if add or not
-            if($result){
-                $email = '';
-                $password = '';
-                $confirmPwd = '';
-                $infoMessage = 'Account correctly registered';
-            }else{
-                $infoMessage = 'Account already exists';
+            // $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`)
+            //          VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
+            $stmt = $db->prepare($query);
+            // Something bad happened
+            if (!$stmt->execute()) {
+                echo "<pre>";
+                print_r($stmt->errorInfo());
+                echo "</pre>";
+
+                exit(1);
             }
+
+            header("Location: " . $_SERVER['PHP_SELF'] . "?result=success");
 
         } catch (PDOException $e) {
             echo $e->getMessage();
@@ -109,13 +135,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div id="content-wrapper">
 
     <div class="container-fluid">
+
+        <?php
+
+        if (isset($_GET['result'])) {
+            switch ($_GET['result']) {
+                case 'success':
+                    $class = 'success';
+                    $msg = 'User has been successfully updated';
+            }
+
+            echo '<div class="alert alert-'.$class.'" role="alert">';
+            echo $msg;
+            echo '</div>';
+        }
+
+        ?>
+
+
         <div class="card card-register mb-3">
             <div class="card-header">Register an Account</div>
             <div class="card-body">
                 <form action="register.php" method="POST">
                     <div class="form-group">
                         <div class="form-label-group">
-                            <input value="<?php echo (isset($email) ? $email : ''); ?>" name="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required="required">
+                            <input value="<?php echo (isset($email) ? $email : ''); ?>" name="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required="required" <?php echo ( ( ! isAdmin() ) ? "disabled" : "" ); ?>
                             <label class="error"><?php echo $emailErr;?></label>
                             <label for="inputEmail">Email address</label>
                         </div>
