@@ -6,7 +6,6 @@ function isAdmin() {
         return false;
     }
 
-
     return (($_SESSION['user']['isAdmin'] == 1) ? true : false);
 }
 
