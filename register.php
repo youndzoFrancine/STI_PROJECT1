@@ -31,10 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             isset($_POST['Admin']) ? $isAdmin = 1 : $isAdmin = 0;
             $format = 'Y-m-d H:i:s';
+            //$timestamp = time();
             $registerDate =  date ($format);
             $lastLoginDate = $registerDate;
-            $warning = date ($format);
+            //$temp1 = date ($format);
+            //$temp2 = date ($format);
 
+            $warning = date ($format);
             if(empty($warning) || !isset($warning)){
                 throw new PDOException($warning);
             }
@@ -42,6 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
             $isActiv = 0;
             $user = array(
+                //'id' => $id,
                 'email' => $email,
                 'password' => $password,
                 'registerDate' => $registerDate,
@@ -51,15 +55,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             );
 
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
-            $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
-                  VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
-            $stmt = $db->prepare($query);
-            if (!$stmt->execute()) {
-                echo "<pre>";
-                print_r($stmt->errorInfo());
-                echo "</pre>";
 
-                exit(1);
+            $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
+                      VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
+            $stmt = $db->prepare($query);
+            $result = $stmt->execute();
+
+            if($result){
+                $email = '';
+                $password = '';
+                $confirmPwd = '';
+                $infoMessage = 'Account correctly registered';
+            }else{
+                $infoMessage = 'Account already exists';
             }
 
         } catch (PDOException $e) {
@@ -68,11 +76,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
+
 ?>
 
 <?php include_once 'includes/header.php'; ?>
 
-<body id="page-top">
+    <body id="page-top">
 
 <?php include_once 'includes/banner.php'; ?>
 
@@ -83,43 +92,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div id="content-wrapper">
 
     <div class="container-fluid">
-      <div class="card card-register mb-3">
-        <div class="card-header">Register an Account</div>
-        <div class="card-body">
-          <form action="register.php" method="POST">
-            <div class="form-group">
-              <div class="form-label-group">
-                <input value="<?php echo (isset($email) ? $email : ''); ?>" name="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required="required">
-                  <label class="error"><?php echo $emailErr;?></label>
-                <label for="inputEmail">Email address</label>
-              </div>
+        <div class="card card-register mb-3">
+            <div class="card-header">Register an Account</div>
+            <div class="card-body">
+                <form action="register.php" method="POST">
+                    <div class="form-group">
+                        <div class="form-label-group">
+                            <input value="<?php echo (isset($email) ? $email : ''); ?>" name="email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required="required">
+                            <label class="error"><?php echo $emailErr;?></label>
+                            <label for="inputEmail">Email address</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-row">
+                            <div class="col-md-6">
+                                <div class="form-label-group">
+                                    <input value="<?php echo (isset($password) ? $password : ''); ?>" name="newPwd" type="password" id="inputPassword" class="form-control" placeholder="Password" required="required">
+                                    <label class="error"><?php echo $newPwdErr;?></label>
+                                    <label for="inputPassword">Password</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-label-group">
+                                    <input value="<?php echo (isset($confirmPwd) ? $confirmPwd : ''); ?>" name="confirmPwd" type="password" id="confirmPassword" class="form-control" placeholder="Confirm password" required="required">
+                                    <label class="error"><?php echo $confirmPwdErr;?></label>
+                                    <label for="confirmPassword">Confirm password</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-text">Administrator: </label>
+                        <input type="checkbox" name="Admin" id="Admin" class="Admin" value="Admin"><br/>
+                    </div>
+                    <input class="btn btn-primary btn-block" type="submit" value="Register" />
+
+                    <div>
+                        <p><span class="infoMessage"><?php $infoMessage;?></span></p>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-              <div class="form-row">
-                <div class="col-md-6">
-                  <div class="form-label-group">
-                    <input value="<?php echo (isset($password) ? $password : ''); ?>" name="newPwd" type="password" id="inputPassword" class="form-control" placeholder="Password" required="required">
-                      <label class="error"><?php echo $newPwdErr;?></label>
-                    <label for="inputPassword">Password</label>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-label-group">
-                    <input value="<?php echo (isset($confirmPwd) ? $confirmPwd : ''); ?>" name="confirmPwd" type="password" id="confirmPassword" class="form-control" placeholder="Confirm password" required="required">
-                      <label class="error"><?php echo $confirmPwdErr;?></label>
-                    <label for="confirmPassword">Confirm password</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-              <div class="form-group">
-                  <label class="label-text">Administrator: </label>
-                  <input type="checkbox" name="Admin" id="Admin" class="Admin" value="Admin"><br/>
-              </div>
-              <input class="btn btn-primary btn-block" type="submit" value="Register" />
-          </form>
         </div>
-      </div>
     </div>
     <!-- /#wrapper -->
 
