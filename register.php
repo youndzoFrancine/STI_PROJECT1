@@ -1,6 +1,6 @@
 <?php
 
-include_once 'includes/config.php';
+include_once 'includes/auth.php';
 
 // define variables and set to empty values
 $email = $password = $confirmPwd = "";
@@ -33,16 +33,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             //$timestamp = time();
             $registerDate =  date ($format);
             $lastLoginDate = $registerDate;
+            //$temp1 = date ($format);
+            //$temp2 = date ($format);
 
             $warning = date ($format);
             if(empty($warning) || !isset($warning)){
                 throw new PDOException($warning);
             }
 
-
-            $id = 98978;
-            $isActive = 0;
-
+            $db = new PDO('sqlite:../databases/' . __DB_NAME);
+            $isActiv = 0;
             $user = array(
                 'id' => $id,
                 'email' => $email,
@@ -50,40 +50,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 'registerDate' => $registerDate,
                 'lastLoginDate' => $lastLoginDate,
                 'isAdmin' => $isAdmin,
-                'isActiv' => $isActive
+                'isActiv' => $isActiv
             );
 
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
-            $query = "INSERT INTO users (`id`, `email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
-                      VALUES (".$user['id'].",'".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
+            $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
+                      VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
             $stmt = $db->prepare($query);
             $result = $stmt->execute();
-                /*
-                foreach ($items as $item){
-                    $insert = $db->exec("INSERT INTO `users` (id, email, password, registerDate, lastLoginDate, isAdmin, isActive) 
-                                      VALUES ('{$item['id']}', '{$item['email']}', '{$item['password']}', '{$item['registerDate']}', '{$item['lastLoginDate']}', '{$item['isAdmin']}', '{$item['isActive']}')");
-                }
-                */
-                
-
-
-                //$stmt = $db->prepare($insert);
-                /*
-                                $stmt->bindParam(':email', $email);
-                                $stmt->bindParam(':password', $password);
-                                $stmt->bindParam(':isAdmin', $isAdmin);
-
-                                foreach ($data as $item){
-                                    $email = $item['email'];
-                                    $password = $item['password'];
-                                    $isAdmin = $item['isAdmin'];
-
-                                $stmt->execute([
-                                        ':email' => $email,
-                                        ':password' => $password,
-                                        ':isAdmin' => $isAdmin,
-                                ]);
-                */
 
         } catch (PDOException $e) {
             echo $e->getMessage();
@@ -101,7 +75,6 @@ function test_input($data) {
 }
 ?>
 
-<?php include_once 'includes/auth.php'; ?>
 <?php include_once 'includes/header.php'; ?>
 
 <body id="page-top">
@@ -114,8 +87,8 @@ function test_input($data) {
 
     <div id="content-wrapper">
 
-    <div class="container">
-      <div class="card card-register mx-auto mt-5">
+    <div class="container-fluid">
+      <div class="card card-register mb-3">
         <div class="card-header">Register an Account</div>
         <div class="card-body">
           <form action="register.php" method="POST">

@@ -1,12 +1,35 @@
 <?php include_once 'includes/auth.php'; ?>
-<?php include_once 'includes/config.php'; ?>
 <?php include_once 'includes/functions.php'; ?>
-
 
 <?php
 
 $existingDir = array('inbox', 'sent');
 $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET['dir'] : $defaultDir );
+
+if (isset($_GET['action']) && !empty($_GET['action']) &&
+    isset($_GET['mID']) && !empty($_GET['mID'])) {
+
+    $availableActions = array('delete');
+    $action = $_GET['action'];
+    $mID = $_GET['mID'];
+
+    // Init DB connection
+    $db = new PDO('sqlite:../databases/' . __DB_NAME);
+
+    if (in_array($action, $availableActions) ) {
+
+        if ($action == 'delete') {
+            $stmt = $db->prepare("DELETE FROM messages WHERE messages.id = ".$mID.";");
+            $result = $stmt->execute();
+        }
+
+        if (!$stmt->execute()) {
+            echo "<pre>";
+            print_r($stmt->errorInfo());
+            echo "</pre>";
+        }
+    }
+}
 
 ?>
 
@@ -90,15 +113,13 @@ $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET[
                                     echo 'No entry in database';
                                 } else {
 
-                                    echo '<table>';
+                                    echo '<table width="100%">';
 
                                     // Display headers
-                                    echo '<th>ID</th>';
-                                    echo '<th>Expéditeur</th>';
-                                    echo '<th>Destinataire</th>';
-                                    echo '<th>Sujet</th>';
-                                    echo '<th>Corps du message</th>';
                                     echo '<th>Date / heure</th>';
+                                    echo '<th>Expéditeur</th>';
+                                    echo '<th>Sujet</th>';
+                                    echo '<th>Détails</th>';
                                     echo '<th>Répondre</th>';
                                     echo '<th>Supprimer</th>';
 
@@ -106,16 +127,41 @@ $dir = ( ( isset($_GET['dir']) && in_array($_GET['dir'],$existingDir) ) ? $_GET[
                                     foreach ($messages as $row) {
                                         // Start a row
                                         echo '<tr>';
-                                        $row["body"]= truncate($row["body"],100);
 
-                                        echo '<td>' . $row["id"] . '</td>';
-                                        echo '<td>' . $row["email_exp"] . '</td>';
-                                        echo '<td>' . $row["email_dst"] . '</td>';
-                                        echo '<td>' . $row["subject"] . '</td>';
-                                        echo '<td>' . $row["body"] . '</td>';
                                         echo '<td>' . $row["time"] . '</td>';
-                                        echo '<td><a href="" > <- </a></td>';
-                                        echo '<td><a href="" > x </a></td>';
+                                        echo '<td>' . $row["email_exp"] . '</td>';
+                                        echo '<td>' . $row["subject"] . '</td>';
+                                        echo '<td><a class="btn btn-secondary" href="#" role="button" data-toggle="modal" data-target="#mID' . $row["id"] . '">Détails</a></td>';
+                                        echo '<td><a class="btn btn-primary" href="#" role="button">Répondre</a></td>';
+                                        echo '<td><a class="btn btn-danger" href="messages.php?action=delete&mID=' . $row["id"] . '" >Supprimer</a></td>';
+
+                                        ?>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="mID<?php echo $row["id"]; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                          <div class="modal-dialog modal-lg modal-notify modal-info" role="document">
+                                            <div class="modal-content">
+                                              <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">
+                                                    Date de réception : <strong><?php echo $row["time"]; ?></strong><br>
+                                                    Expéditeur : <strong><?php echo $row["email_exp"]; ?></strong><br>
+                                                    Sujet : <strong><?php echo $row["subject"]; ?></strong>
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                  <span aria-hidden="true">&times;</span>
+                                                </button>
+                                              </div>
+                                              <div class="modal-body">
+                                                  <?php echo $row["body"]; ?>
+                                              </div>
+                                              <div class="modal-footer">
+                                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <a class="btn btn-primary" href="#" role="button">Répondre</a>
+                                                <a class="btn btn-danger" href="messages.php?action=delete&mID=<?php echo $row["id"]; ?>">Supprimer</a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <?php
 
                                         // end row
                                         echo '</tr>';

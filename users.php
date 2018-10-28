@@ -67,16 +67,15 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
                                     echo 'No entry in database';
                                 } else {
 
-                                    echo '<table>';
+                                    echo '<table width="100%">';
 
                                     // Display headers
-                                    echo '<th>ID</th>';
-                                    echo '<th>email</th>';
-                                    echo '<th>password</th>';
-                                    echo '<th>isAdmin</th>';
+                                    echo '<th>Login / email</th>';
+                                    echo '<th>Admin</th>';
                                     echo '<th>registerDate</th>';
                                     echo '<th>lastLoginDate</th>';
-                                    echo '<th>isActiv</th>';
+                                    echo '<th>Activ</th>';
+                                    echo '<th colspan="3">Actions</th>';
 
                                     // Iterate each record
                                     foreach ($users as $user) {
@@ -84,13 +83,17 @@ if (isset($_GET['action']) && !empty($_GET['action']) &&
                                         // Start a row
                                         echo '<tr>';
 
-                                        echo '<td>' . $user["id"] . '</td>';
+                                        // echo '<td>' . $user["id"] . '</td>';
                                         echo '<td>' . $user["email"] . '</td>';
-                                        echo '<td>' . $user["password"] . '</td>';
-                                        echo '<td>' . $user["isAdmin"] . '</td>';
+                                        // echo '<td>' . $user["password"] . '</td>';
+                                        echo '<td>' . ( $user["isAdmin"] ? "yes" : "no" ) . '</td>';
                                         echo '<td>' . $user["registerDate"] . '</td>';
                                         echo '<td>' . $user["lastLoginDate"] . '</td>';
-                                        echo '<td>' . $user["isActiv"] . '</td>';
+                                        echo '<td>' . ( $user["isActiv"] ? "yes" : "no" ) . '</td>';
+
+                                        echo '<td><a class="btn btn-primary" href="' . __APP_URL . '/users.php?action=toggle&value=isAdmin&uID='.$user["id"].'" role="button">Toggle activ</a></td>';
+                                        echo '<td><a class="btn btn-primary" href="' . __APP_URL . '/users.php?action=toggle&value=isActiv&uID='.$user["id"].'" role="button">Toggle admin</a></td>';
+                                        echo '<td><a class="btn btn-danger" href="' . __APP_URL . '/users.php?action=remove&uID='.$user["id"].'" >Remove</a></td>';
 
                                         // end row
                                         echo '</tr>';

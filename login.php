@@ -29,7 +29,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Init DB connection
             $db = new PDO('sqlite:../databases/' . __DB_NAME);
-            $stmt = $db->prepare("SELECT * FROM `users` WHERE email = '" . $email . "' LIMIT 1;");
+            $stmt = $db->prepare("SELECT * FROM `users` WHERE email = '" . $email . "' AND isActiv = '1' LIMIT 1;");
             $result = $stmt->execute();
 
             if (!$stmt->execute()) {
