@@ -4,7 +4,7 @@ include_once 'includes/auth.php';
 include_once 'includes/functions.php';
 
 // define variables and set to empty values
-$email = $password = $confirmPwd = "";
+$email = $password = $confirmPwd = $infoMessage = "";
 $emailErr = $newPwdErr = $confirmPwdErr = $warning = " ";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -25,17 +25,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $confirmPwd = test_input($_POST["confirmPwd"]);
 
     if ($password !== $confirmPwd) {
-        $confirmPwdErr = "Password is different";
+        header("Location: " . $_SERVER['PHP_SELF'] . "?result=differentPassword", $email);
     } else{
         try {
 
             isset($_POST['Admin']) ? $isAdmin = 1 : $isAdmin = 0;
             $format = 'Y-m-d H:i:s';
-            //$timestamp = time();
             $registerDate =  date ($format);
             $lastLoginDate = $registerDate;
-            //$temp1 = date ($format);
-            //$temp2 = date ($format);
 
             $warning = date ($format);
             if(empty($warning) || !isset($warning)){
@@ -59,15 +56,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $query = "INSERT INTO users (`email`, `password`, `registerDate`, `lastLoginDate`, `isAdmin`, `isActiv`) 
                       VALUES ('".$user['email']."','".$user['password']."','".$user['registerDate']."','".$user['lastLoginDate']."',".$user['isAdmin'].",".$user['isActiv'].");";
             $stmt = $db->prepare($query);
-            $result = $stmt->execute();
+            //$result = $stmt->execute();
 
-            if($result){
-                $email = '';
-                $password = '';
-                $confirmPwd = '';
-                $infoMessage = 'Account correctly registered';
-            }else{
-                $infoMessage = 'Account already exists';
+            if (!$stmt->execute()) {
+                header("Location: " . $_SERVER['PHP_SELF'] . "?result=danger");
+            } else {
+                header("Location: " . $_SERVER['PHP_SELF'] . "?result=success");
             }
 
         } catch (PDOException $e) {
@@ -92,6 +86,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div id="content-wrapper">
 
     <div class="container-fluid">
+
+
+        <?php
+
+        if (isset($_GET['result'])) {
+            switch ($_GET['result']) {
+                case 'success':
+                    $class = 'success';
+                    $msg = 'Accout has been successfully created';
+                    break;
+                case 'danger':
+                    $class = 'danger';
+                    $msg = 'Email already exits';
+                    break;
+                case 'differentPassword':
+                    $class = 'danger';
+                    $msg = 'Wrong confirmation of the password';
+            }
+
+            echo '<div class="alert alert-'.$class.'" role="alert">';
+            echo $msg;
+            echo '</div>';
+        }
+
+        ?>
+
         <div class="card card-register mb-3">
             <div class="card-header">Register an Account</div>
             <div class="card-body">
@@ -125,11 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label class="label-text">Administrator: </label>
                         <input type="checkbox" name="Admin" id="Admin" class="Admin" value="Admin"><br/>
                     </div>
-                    <input class="btn btn-primary btn-block" type="submit" value="Register" />
-
-                    <div>
-                        <p><span class="infoMessage"><?php $infoMessage;?></span></p>
-                    </div>
+                    <input class="btn btn-primary btn-block" type="submit" value="Register" href="register.php" />
                 </form>
             </div>
         </div>
